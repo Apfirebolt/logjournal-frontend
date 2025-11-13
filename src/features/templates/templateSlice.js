@@ -2,7 +2,7 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import templateService from "./templateService";
 
 const initialState = {
-  templateList: [],
+  templateList: {},
   template: {},
   isError: false,
   isSuccess: false,
