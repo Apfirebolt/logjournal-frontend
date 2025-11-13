@@ -18,22 +18,33 @@ const RegisterPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
+
+    const usernameTrim = username.trim();
+    const emailTrim = email.trim();
+    const passwordVal = password;
+
+    if (!usernameTrim || !emailTrim || !passwordVal) {
+      setError("Please provide username, email and password.");
+      return;
+    }
+
     setLoading(true);
 
     try {
-      const response = await axiosInstance.post("auth/register", {
-        username,
-        email,
-        password,
+      const response = await axiosInstance.post('api/register', {
+        username: usernameTrim,
+        email: emailTrim,
+        password: passwordVal,
       });
 
-      // Handle successful registration (e.g., redirect to login)
-      console.log("Registration successful:", response.data);
-      // router.push('/login'); // Uncomment and use Next.js router
+      if (response.status === 201) {
+        // Registration successful, redirect to login or home page
+        window.location.href = '/login';
+      } else {
+        setError(response.data.error || 'Registration failed. Please try again.');
+      }
     } catch (err) {
-      setError(
-        err.response?.data?.message || "Registration failed. Please try again."
-      );
+      setError(err.response?.data?.error || 'An error occurred. Please try again.');
     } finally {
       setLoading(false);
     }
