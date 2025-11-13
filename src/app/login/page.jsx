@@ -138,7 +138,7 @@ const LoginPage = () => {
             {session?.user && (
               <div className="pt-4 mt-4 border-t border-gray-200">
                 <div className="flex items-center justify-between">
-                  <div className="text-sm text-gray-700">
+                  <div className="text-sm text-white">
                     Signed in as{" "}
                     <span className="font-medium">
                       {session.user.email || ""}

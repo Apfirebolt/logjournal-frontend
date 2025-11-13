@@ -1,24 +1,25 @@
-import React, { Fragment } from "react";
+'use client';
+
+import React, { Fragment, useEffect } from "react";
+import { useSession } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
 import axiosInstance from "@/plugins/interceptor";
 import Head from "next/head";
 import Header from "@/components/header";
 import Footer from "@/components/footer";
-import AnimeSection from "@/components/anime-section";
 
-async function getAnimeList() {
-  try {
-    const response = await axiosInstance.get("anime"); // Replace with your API endpoint
-    
-    const anime = response.data;
-    return anime;
-  } catch (error) {
-    console.error("Error fetching anime data:", error);
-    return [];
-  }
-}
 
-const AnimePage = async () => {
-  const anime = await getAnimeList();
+const Dashboard = () => {
+
+  const { data: session, status } = useSession();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (status === 'unauthenticated') {
+      router.push('/login');
+    }
+  }, [status, router]);
+
 
   return (
     <Fragment>
@@ -44,13 +45,12 @@ const AnimePage = async () => {
               className="absolute inset-0 w-full h-full object-cover opacity-50"
             />
             <div className="relative z-10 p-8">
-              <h1 className="text-5xl font-bold mb-4">Anime List</h1>
+              <h1 className="text-5xl font-bold mb-4">Dashboard</h1>
               <p className="text-lg mb-4">
-                Dive into the world of anime and explore a variety of series available on Animix.
+                Welcome to your personal dashboard! Here you can manage your activities, track your progress, and stay organized with all your important information in one place.
               </p>
             </div>
           </div>
-          <AnimeSection anime={anime} />
         </section>
       </main>
       <Footer />
@@ -58,4 +58,4 @@ const AnimePage = async () => {
   );
 };
 
-export default AnimePage;
+export default Dashboard;

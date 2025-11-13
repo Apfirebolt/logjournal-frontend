@@ -41,8 +41,7 @@ export const authOptions = {
       // This is the core function where you validate credentials
       async authorize(credentials) {
         // 1. Make a POST request to your Express backend's login endpoint
-        const expressLoginUrl =
-          process.env.BACKEND_BASE_URL + "api/login";
+        const expressLoginUrl = process.env.BACKEND_BASE_URL + "api/login";
 
         try {
           if (!credentials?.email || !credentials?.password) return null;
@@ -82,16 +81,13 @@ export const authOptions = {
           token.token = user.access_token;
           return token;
         }
-        // for google auth
-        token.id = user.id;
-        token.email = user.email;
       }
       return token;
     },
     async session({ session, token }) {
       session.user.id = token.id;
       session.user.email = token.email;
-      if (token.token) {
+      if (token.access) {
         session.user.token = token.token;
       }
       return session;
