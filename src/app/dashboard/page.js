@@ -7,16 +7,45 @@ import axiosInstance from "@/plugins/interceptor";
 import Head from "next/head";
 import Header from "@/components/header";
 import Footer from "@/components/footer";
+import TemplateForm from "@/components/TemplateForm";
+import { useDispatch } from "react-redux";
+import { createTemplate, getTemplates } from "../../features/templates/templateSlice";
 
 const Dashboard = () => {
   const { data: session, status } = useSession();
   const router = useRouter();
+  const dispatch = useDispatch();
 
   useEffect(() => {
     if (status === "unauthenticated") {
       router.push("/login");
     }
   }, [status, router]);
+
+  // call API only if token is available
+  useEffect(() => {
+    if (session?.user?.token) {
+      const params = {
+        token: session.user.token,
+        page: 1,
+        search: ""
+      };
+      dispatch(getTemplates(params));
+    }
+  }, [session, dispatch]);
+  
+  const createTemplateHandler = async (templateData) => {
+    console.log("Creating template with data:", templateData);
+    try {
+      const payload = {
+        token: session.user.token,
+        templateData: templateData
+      }
+      dispatch(createTemplate(payload));
+    } catch (error) {
+      console.error("Failed to create template:", error);
+    }
+  }
 
   return (
     <Fragment>
@@ -56,6 +85,9 @@ const Dashboard = () => {
               </p>
             </div>
           </div>
+        </section>
+        <section className="container mx-auto p-6 bg-white rounded-lg shadow-lg my-6">
+          <TemplateForm createTemplate={createTemplateHandler} />
         </section>
       </main>
       <Footer />

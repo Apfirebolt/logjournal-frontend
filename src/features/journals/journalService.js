@@ -1,9 +1,8 @@
-import axiosInstance from "../../plugins/interceptor";
+import axiosInstance from "../../utils/axiosInstance";
 
-
-// Get template List
-const getTemplateList = async (token, page = 1, search = "") => {
-    try {
+// Get journal List
+const getJournalList = async (page = 1, search = "") => {
+  try {
     const params = new URLSearchParams();
     if (page) {
       params.append("page", page);
@@ -11,14 +10,7 @@ const getTemplateList = async (token, page = 1, search = "") => {
     if (search) {
       params.append("search", search);
     }
-    const response = await axiosInstance.get(
-      `/api/templates?${params.toString()}`,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      }
-    );
+    const response = await axiosInstance.get(`/journals?${params.toString()}`);
     return response.data;
   } catch (err) {
     let errorMessage = "Something went wrong";
@@ -29,10 +21,10 @@ const getTemplateList = async (token, page = 1, search = "") => {
   }
 };
 
-// Get template by ID
-const getTemplateById = async (id) => {
+// Get journal by ID
+const getJournalById = async (id) => {
   try {
-    const response = await axiosInstance.get(`/templates/${id}`);
+    const response = await axiosInstance.get(`/journals/${id}`);
     return response.data;
   } catch (err) {
     let errorMessage = "Something went wrong";
@@ -43,14 +35,10 @@ const getTemplateById = async (id) => {
   }
 };
 
-// Create template
-const createTemplate = async (token, templateData) => {
+// Create journal
+const createJournal = async (journalData) => {
   try {
-    const response = await axiosInstance.post("/api/templates", templateData, {
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
-    });
+    const response = await axiosInstance.post("/journals", journalData);
     return response.data;
   } catch (err) {
     let errorMessage = "Something went wrong";
@@ -61,10 +49,10 @@ const createTemplate = async (token, templateData) => {
   }
 };
 
-// Update template
-const updateTemplate = async (id, templateData) => {
+// Update journal
+const updateJournal = async (id, journalData) => {
   try {
-    const response = await axiosInstance.put(`/templates/${id}`, templateData);
+    const response = await axiosInstance.put(`/journals/${id}`, journalData);
     return response.data;
   } catch (err) {
     let errorMessage = "Something went wrong";
@@ -75,10 +63,10 @@ const updateTemplate = async (id, templateData) => {
   }
 };
 
-// Delete template
-const deleteTemplate = async (id) => {
+// Delete journal
+const deleteJournal = async (id) => {
   try {
-    const response = await axiosInstance.delete(`/templates/${id}`);
+    const response = await axiosInstance.delete(`/journals/${id}`);
     return response.data;
   } catch (err) {
     let errorMessage = "Something went wrong";
@@ -89,12 +77,12 @@ const deleteTemplate = async (id) => {
   }
 };
 
-const templateService = {
-  getTemplateList,
-  getTemplateById,
-  createTemplate,
-  updateTemplate,
-  deleteTemplate,
+const journalService = {
+  getJournalList,
+  getJournalById,
+  createJournal,
+  updateJournal,
+  deleteJournal,
 };
 
-export default templateService;
+export default journalService;

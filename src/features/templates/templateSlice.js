@@ -15,7 +15,12 @@ export const getTemplates = createAsyncThunk(
   "template/list",
   async (params, thunkAPI) => {
     try {
-      return await templateService.getTemplateList(params.page, params.search);
+      console.log("Fetching templates with params:", params);
+      return await templateService.getTemplateList(
+        params.token,
+        params.page,
+        params.search
+      );
     } catch (error) {
       const message =
         (error.response &&
@@ -34,6 +39,64 @@ export const getTemplateById = createAsyncThunk(
   async (id, thunkAPI) => {
     try {
       return await templateService.getTemplateById(id);
+    } catch (error) {
+      const message =
+        (error.response &&
+          error.response.data &&
+          error.response.data.message) ||
+        error.message ||
+        error.toString();
+
+      return thunkAPI.rejectWithValue(message);
+    }
+  }
+);
+
+export const createTemplate = createAsyncThunk(
+  "template/create",
+  async (payload, thunkAPI) => {
+    try {
+      console.log("Creating template with data:", payload.templateData);
+      return await templateService.createTemplate(
+        payload.token,
+        payload.templateData
+      );
+    } catch (error) {
+      const message =
+        (error.response &&
+          error.response.data &&
+          error.response.data.message) ||
+        error.message ||
+        error.toString();
+
+      return thunkAPI.rejectWithValue(message);
+    }
+  }
+);
+
+export const updateTemplate = createAsyncThunk(
+  "template/update",
+  async ({ id, templateData }, thunkAPI) => {
+    try {
+      return await templateService.updateTemplate(id, templateData);
+    } catch (error) {
+      const message =
+        (error.response &&
+          error.response.data &&
+          error.response.data.message) ||
+        error.message ||
+        error.toString();
+
+      return thunkAPI.rejectWithValue(message);
+    }
+  }
+);
+
+export const deleteTemplate = createAsyncThunk(
+  "template/delete",
+  async (id, thunkAPI) => {
+    try {
+      return await templateService.deleteTemplate(id);
     } catch (error) {
       const message =
         (error.response &&
