@@ -159,7 +159,7 @@ const Header = () => {
                 </li>
                 <li>
                   <Link 
-                    href="/journal/categories" 
+                    href="/categories" 
                     className={`px-4 py-2 rounded-xl font-medium text-sm flex items-center space-x-2 transition-all whitespace-nowrap ${
                       pathname === '/journal/categories' ? 'shadow-sm' : 'opacity-80 hover:opacity-100 hover:bg-black/5 dark:hover:bg-white/5'
                     }`}
@@ -373,9 +373,9 @@ const Header = () => {
               </Link>
 
               <Link
-                href="/journal/categories"
+                href="/categories"
                 className="flex items-center gap-3 px-4 py-3 rounded-xl font-medium text-sm transition-colors"
-                style={pathname === '/journal/categories' ? { backgroundColor: 'var(--accent)', color: 'var(--bg-primary)' } : { color: 'var(--text-main)' }}
+                style={pathname === '/categories' ? { backgroundColor: 'var(--accent)', color: 'var(--bg-primary)' } : { color: 'var(--text-main)' }}
               >
                 <TagIcon className="h-5 w-5" />
                 <span>Categories</span>
