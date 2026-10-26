@@ -1,64 +1,77 @@
-// components/Footer.jsx
 'use client';
 
 import Link from 'next/link';
+import { BookOpenIcon } from '@heroicons/react/24/outline';
 
 const Footer = () => {
   return (
-    <footer className="bg-white dark:bg-anime-dark border-t border-gray-200 dark:border-anime-sage/20 text-gray-600 dark:text-anime-light/80 transition-colors">
+    <footer 
+      className="border-t transition-colors duration-300"
+      style={{
+        backgroundColor: 'var(--bg-secondary)',
+        borderColor: 'var(--border-color)',
+        color: 'var(--text-main)',
+      }}
+    >
       <div className="container mx-auto px-6 pt-12 pb-8 max-w-7xl">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-12">
           
           {/* Brand & Description */}
           <div className="md:col-span-1 space-y-4">
-            <Link href="/" className="inline-block">
-              <span className="text-2xl font-bold font-heading text-anime-sage tracking-wider">
-                Anime<span className="text-anime-coral">Lounge</span>
+            <Link href="/" className="inline-flex items-center gap-2 group">
+              <div 
+                className="p-1.5 rounded-lg transition-transform group-hover:scale-105"
+                style={{ backgroundColor: 'var(--accent)', color: 'var(--bg-primary)' }}
+              >
+                <BookOpenIcon className="h-4 w-4" />
+              </div>
+              <span className="text-xl font-bold font-theme-heading tracking-tight" style={{ color: 'var(--text-main)' }}>
+                Log<span style={{ color: 'var(--accent)' }}>Journal</span>
               </span>
             </Link>
-            <p className="text-sm text-gray-500 dark:text-anime-light/60 leading-relaxed font-sans">
-              A modern multi-domain recommendation platform for anime powered by intelligent similarity vectors.
+            <p className="text-sm leading-relaxed font-theme-body opacity-80" style={{ color: 'var(--text-muted)' }}>
+              A flexible daily journaling and self-reflection platform with custom categories, block-based prompts, and category ratings.
             </p>
           </div>
 
-          {/* Discovery Links */}
-          <div className="space-y-3 font-sans">
-            <h3 className="text-sm font-semibold font-heading text-gray-900 dark:text-anime-light uppercase tracking-wider">
-              Discover
+          {/* Navigation Links */}
+          <div className="space-y-3 font-theme-body">
+            <h3 className="text-xs font-bold uppercase tracking-widest opacity-60" style={{ color: 'var(--text-main)' }}>
+              Navigation
             </h3>
             <ul className="space-y-2 text-sm">
               <li>
-                <Link href="/anime" className="hover:text-anime-sage transition-colors">
-                  Anime
+                <Link href="/" className="transition-opacity opacity-80 hover:opacity-100">
+                  Dashboard
                 </Link>
               </li>
               <li>
-                <Link href="/manga" className="hover:text-anime-sage transition-colors">
-                  Manga
+                <Link href="/journal/new" className="transition-opacity opacity-80 hover:opacity-100">
+                  New Journal Entry
                 </Link>
               </li>
               <li>
-                <Link href="/compare" className="hover:text-anime-sage transition-colors">
-                  Compare
+                <Link href="/journal/entries" className="transition-opacity opacity-80 hover:opacity-100">
+                  My Entries
                 </Link>
               </li>
               <li>
-                <Link href="/top-by-year" className="hover:text-anime-sage transition-colors">
-                  Top By Year
+                <Link href="/journal/categories" className="transition-opacity opacity-80 hover:opacity-100">
+                  Categories & Tags
                 </Link>
               </li>
             </ul>
           </div>
 
-          {/* System & API Links */}
-          <div className="space-y-3 font-sans">
-            <h3 className="text-sm font-semibold font-heading text-gray-900 dark:text-anime-light uppercase tracking-wider">
-              System
+          {/* System & Analytics Links */}
+          <div className="space-y-3 font-theme-body">
+            <h3 className="text-xs font-bold uppercase tracking-widest opacity-60" style={{ color: 'var(--text-main)' }}>
+              Insights
             </h3>
             <ul className="space-y-2 text-sm">
               <li>
-                <Link href="/algorithm" className="hover:text-anime-sage transition-colors">
-                  Similarity Engine
+                <Link href="/journal/analytics" className="transition-opacity opacity-80 hover:opacity-100">
+                  Rating Analytics
                 </Link>
               </li>
               <li>
@@ -66,7 +79,7 @@ const Footer = () => {
                   href="https://github.com" 
                   target="_blank" 
                   rel="noopener noreferrer" 
-                  className="hover:text-anime-sage transition-colors"
+                  className="transition-opacity opacity-80 hover:opacity-100"
                 >
                   GitHub Repository
                 </a>
@@ -74,23 +87,32 @@ const Footer = () => {
             </ul>
           </div>
 
-          {/* Connect / Newsletter */}
-          <div className="space-y-3 font-sans">
-            <h3 className="text-sm font-semibold font-heading text-gray-900 dark:text-anime-light uppercase tracking-wider">
-              Stay Updated
+          {/* Stay Updated / Newsletter */}
+          <div className="space-y-3 font-theme-body">
+            <h3 className="text-xs font-bold uppercase tracking-widest opacity-60" style={{ color: 'var(--text-main)' }}>
+              Stay Mindful
             </h3>
-            <p className="text-sm text-gray-500 dark:text-anime-light/60">
-              Get notified when new features and datasets are indexed.
+            <p className="text-sm opacity-80" style={{ color: 'var(--text-muted)' }}>
+              Get weekly reflection prompts and journaling insights delivered to your inbox.
             </p>
             <form onSubmit={(e) => e.preventDefault()} className="flex gap-2">
               <input
                 type="email"
                 placeholder="Enter your email"
-                className="w-full px-3 py-2 text-sm bg-gray-50 dark:bg-anime-dark/50 border border-gray-300 dark:border-anime-sage/30 rounded-md focus:outline-none focus:border-anime-sage text-gray-900 dark:text-anime-light placeholder-gray-400 dark:placeholder-anime-light/40"
+                className="w-full px-3 py-2 text-sm rounded-xl border focus:outline-none transition-colors"
+                style={{
+                  backgroundColor: 'var(--card-bg)',
+                  borderColor: 'var(--border-color)',
+                  color: 'var(--text-main)',
+                }}
               />
               <button
                 type="submit"
-                className="px-4 py-2 text-sm font-medium font-semibold text-anime-dark bg-anime-sage hover:bg-anime-sage/90 rounded-md transition-colors"
+                className="px-4 py-2 text-sm font-semibold rounded-xl transition-all shadow-sm hover:opacity-90"
+                style={{
+                  backgroundColor: 'var(--accent)',
+                  color: 'var(--bg-primary)',
+                }}
               >
                 Join
               </button>
@@ -100,14 +122,17 @@ const Footer = () => {
         </div>
 
         {/* Divider & Copyright */}
-        <div className="border-t border-gray-200 dark:border-anime-sage/20 pt-6 mt-6 flex flex-col md:flex-row justify-between items-center text-xs text-gray-400 dark:text-anime-light/50 font-sans gap-4">
-          <p>&copy; {new Date().getFullYear()} AnimeLounge Platform. All rights reserved.</p>
+        <div 
+          className="border-t pt-6 mt-6 flex flex-col md:flex-row justify-between items-center text-xs font-theme-body gap-4 opacity-75"
+          style={{ borderColor: 'var(--border-color)', color: 'var(--text-muted)' }}
+        >
+          <p>&copy; {new Date().getFullYear()} LogJournal Platform. All rights reserved.</p>
           
           <div className="flex space-x-6">
-            <Link href="/privacy" className="hover:text-gray-700 dark:hover:text-anime-light transition-colors">
+            <Link href="/privacy" className="hover:opacity-100 transition-opacity">
               Privacy Policy
             </Link>
-            <Link href="/terms" className="hover:text-gray-700 dark:hover:text-anime-light transition-colors">
+            <Link href="/terms" className="hover:opacity-100 transition-opacity">
               Terms of Service
             </Link>
           </div>
