@@ -1,0 +1,106 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Inter:wght@400;500;600&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,400&family=Lora:ital,wght@0,400;0,600;1,400&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@400;500&family=Syne:wght@600;700;800&family=Outfit:wght@400;500;600&family=Cinzel:wght@600;700&family=Plus+Jakarta+Sans:wght@400;500&display=swap');
+
+@import "tailwindcss";
+
+/* Enable class-based theme switching */
+@custom-variant light (&:where(.light, .light *));
+@custom-variant dark (&:where(.dark, .dark *));
+@custom-variant neon (&:where(.neon, .neon *));
+@custom-variant argon (&:where(.argon, .argon *));
+
+@theme {
+  --font-heading: 'Plus Jakarta Sans', sans-serif;
+  --font-body: 'Inter', sans-serif;
+}
+
+/* ==========================================
+   1. LIGHT THEME (Warm Editorial / Cream Paper)
+   ========================================== */
+:root, .light {
+  --bg-primary: #FDFBF7;       /* Warm cream */
+  --bg-secondary: #F4EEDC;     /* Soft parchment */
+  --text-main: #2C2A29;        /* Deep charcoal */
+  --text-muted: #6B6560;       /* Muted brown-gray */
+  --accent: #C86D51;           /* Terracotta accent */
+  --accent-hover: #B55D41;
+  --card-bg: #FFFFFF;
+  --border-color: #E6DFD5;
+
+  --font-heading: 'Playfair Display', serif;
+  --font-body: 'Lora', serif;
+}
+
+/* ==========================================
+   2. DARK THEME (Midnight Slate / Calm Navy)
+   ==========================================
+   Matching your previous anime/midnight vibe */
+.dark {
+  --bg-primary: #0B132B;       /* Deep navy */
+  --bg-secondary: #1C2541;     /* Lighter navy */
+  --text-main: #F2F2F2;        /* Off-white */
+  --text-muted: #8D99AE;       /* Steel blue gray */
+  --accent: #E0A96D;           /* Soft gold / amber */
+  --accent-hover: #C59157;
+  --card-bg: #141E3A;
+  --border-color: #2D3A5D;
+
+  --font-heading: 'Outfit', sans-serif;
+  --font-body: 'Inter', sans-serif;
+}
+
+/* ==========================================
+   3. NEON THEME (Cyberpunk / High Contrast Synthwave)
+   ========================================== */
+.neon {
+  --bg-primary: #05050A;       /* Absolute void black */
+  --bg-secondary: #12111A;     /* Dark violet-gray */
+  --text-main: #F8F8F2;        /* Bright neon white */
+  --text-muted: #A6ACCD;       /* Lavender gray */
+  --accent: #FF2A6D;           /* Neon hot pink */
+  --accent-hover: #D91E5B;
+  --card-bg: #1A1826;
+  --border-color: #2E294E;
+
+  --font-heading: 'Syne', sans-serif;
+  --font-body: 'Space Grotesk', sans-serif;
+}
+
+/* ==========================================
+   4. ARGON THEME (Cyber-Industrial / Emerald & Slate)
+   ========================================== */
+.argon {
+  --bg-primary: #0D1B1E;       /* Deep dark teal/slate */
+  --bg-secondary: #1B2A2D;     /* Muted dark forest */
+  --text-main: #E0FBFC;        /* Ice cyan white */
+  --text-muted: #8D9FA1;       /* Muted sage */
+  --accent: #00B4D8;           /* Electric cyan / neon teal */
+  --accent-hover: #0096B4;
+  --card-bg: #132225;
+  --border-color: #243D42;
+
+  --font-heading: 'Cinzel', serif;
+  --font-body: 'Plus Jakarta Sans', sans-serif;
+}
+
+/* ==========================================
+   GLOBAL BASE STYLES
+   ========================================== */
+body {
+  font-family: var(--font-body);
+  background-color: var(--bg-primary);
+  color: var(--text-main);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading);
+}
+
+/* Reusable utility classes for buttons and text matching active theme fonts */
+.font-theme-heading {
+  font-family: var(--font-heading);
+}
+
+.font-theme-body {
+  font-family: var(--font-body);
+}
