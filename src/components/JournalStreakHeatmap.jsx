@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useMemo } from 'react';
-import { FireIcon, TrophyIcon } from '@lucide/react';
+import { Flame, Trophy } from 'lucide-react';
 
 export default function JournalStreakHeatmap({ entries = [] }) {
  
@@ -105,7 +105,7 @@ export default function JournalStreakHeatmap({ entries = [] }) {
         <div className="flex items-center gap-3">
           {/* Current Streak Badge */}
           <div className="px-4 py-2.5 rounded-2xl border flex items-center gap-2.5 shadow-xs" style={{ backgroundColor: 'var(--bg-primary)', borderColor: 'var(--border-color)' }}>
-            <FireIcon className="h-5 w-5 text-amber-500 fill-amber-500 animate-pulse" />
+            <Flame className="h-5 w-5 text-amber-500 fill-amber-500 animate-pulse" />
             <div>
               <p className="text-[10px] uppercase font-bold tracking-widest opacity-60" style={{ color: 'var(--text-muted)' }}>Current Streak</p>
               <p className="text-sm font-extrabold font-mono" style={{ color: 'var(--text-main)' }}>{currentStreak} Days</p>
@@ -114,7 +114,7 @@ export default function JournalStreakHeatmap({ entries = [] }) {
 
           {/* Total Entries Badge */}
           <div className="px-4 py-2.5 rounded-2xl border flex items-center gap-2.5 shadow-xs" style={{ backgroundColor: 'var(--bg-primary)', borderColor: 'var(--border-color)' }}>
-            <TrophyIcon className="h-5 w-5" style={{ color: 'var(--accent)' }} />
+            <Trophy className="h-5 w-5" style={{ color: 'var(--accent)' }} />
             <div>
               <p className="text-[10px] uppercase font-bold tracking-widest opacity-60" style={{ color: 'var(--text-muted)' }}>Total Entries</p>
               <p className="text-sm font-extrabold font-mono" style={{ color: 'var(--text-main)' }}>{totalEntries}</p>

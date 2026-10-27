@@ -1,25 +1,39 @@
 'use client';
 
 import React, { useMemo } from 'react';
-import { 
-  ResponsiveContainer, 
-  RadarChart, 
-  PolarGrid, 
-  PolarAngleAxis, 
-  PolarRadiusAxis, 
-  Radar, 
-  BarChart, 
-  Bar, 
-  XAxis, 
-  YAxis, 
-  Tooltip, 
-  CartesianGrid 
-} from 'recharts';
+import {
+  Chart as ChartJS,
+  RadialLinearScale,
+  PointElement,
+  LineElement,
+  Filler,
+  Tooltip,
+  Legend,
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+} from 'chart.js';
+import { Radar, Bar } from 'react-chartjs-2';
 import { ChartBarIcon, SparklesIcon } from '@heroicons/react/24/outline';
 
+// Register Chart.js modules
+ChartJS.register(
+  RadialLinearScale,
+  PointElement,
+  LineElement,
+  Filler,
+  Tooltip,
+  Legend,
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title
+);
+
 export default function JournalAnalyticsCharts({ entries = [], categories = [] }) {
-  // 1. Calculate average score per category across all entries
-  const radarData = useMemo(() => {
+  // 1. Calculate average score per category across all entries for the Radar Chart
+  const radarChartData = useMemo(() => {
     const categoryStats = {};
 
     categories.forEach((cat) => {
@@ -43,15 +57,32 @@ export default function JournalAnalyticsCharts({ entries = [], categories = [] }
       });
     });
 
-    return Object.values(categoryStats).map((stat) => ({
-      category: stat.name,
-      rating: stat.count > 0 ? parseFloat((stat.totalScore / stat.count).toFixed(1)) : 0,
-      fullMark: 5,
-    }));
+    const labels = [];
+    const dataPoints = [];
+
+    Object.values(categoryStats).forEach((stat) => {
+      labels.push(stat.name);
+      const avg = stat.count > 0 ? parseFloat((stat.totalScore / stat.count).toFixed(1)) : 0;
+      dataPoints.push(avg);
+    });
+
+    return {
+      labels,
+      datasets: [
+        {
+          label: 'Average Rating',
+          data: dataPoints,
+          backgroundColor: 'rgba(99, 102, 241, 0.2)', // Accent color tint
+          borderColor: 'var(--accent)',
+          borderWidth: 2,
+          pointBackgroundColor: 'var(--accent)',
+        },
+      ],
+    };
   }, [entries, categories]);
 
-  // 2. Calculate rating frequency distribution (1 to 5 stars)
-  const distributionData = useMemo(() => {
+  // 2. Calculate rating frequency distribution (1 to 5 stars) for the Bar Chart
+  const barChartData = useMemo(() => {
     const dist = { '1 Star': 0, '2 Stars': 0, '3 Stars': 0, '4 Stars': 0, '5 Stars': 0 };
 
     entries.forEach((entry) => {
@@ -64,11 +95,58 @@ export default function JournalAnalyticsCharts({ entries = [], categories = [] }
       });
     });
 
-    return Object.keys(dist).map((key) => ({
-      rating: key,
-      count: dist[key],
-    }));
+    return {
+      labels: Object.keys(dist),
+      datasets: [
+        {
+          label: 'Frequency',
+          data: Object.values(dist),
+          backgroundColor: 'var(--accent)',
+          borderRadius: 8,
+        },
+      ],
+    };
   }, [entries]);
+
+  // Common options to respect your CSS theme variables
+  const radarOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    scales: {
+      r: {
+        angleLines: { color: 'rgba(150, 150, 150, 0.2)' },
+        grid: { color: 'rgba(150, 150, 150, 0.2)' },
+        ticks: { display: false, max: 5, min: 0 },
+        pointLabels: {
+          font: { size: 12, family: 'inherit' },
+        },
+      },
+    },
+    plugins: {
+      legend: { display: false },
+    },
+  };
+
+  const barOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    scales: {
+      x: {
+        grid: { display: false },
+        ticks: { font: { size: 12 } },
+      },
+      y: {
+        grid: { color: 'rgba(150, 150, 150, 0.1)' },
+        ticks: { precision: 0 },
+      },
+    },
+    plugins: {
+      legend: { display: false },
+    },
+  };
+
+  const hasRadarData = radarChartData.labels.length > 0;
+  const hasBarData = barChartData.datasets[0].data.some((val) => val > 0);
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -90,20 +168,11 @@ export default function JournalAnalyticsCharts({ entries = [], categories = [] }
           </div>
         </div>
 
-        <div className="h-72 w-full">
-          {radarData.length > 0 ? (
-            <ResponsiveContainer width="100%" height="100%">
-              <RadarChart data={radarData} outerRadius={90}>
-                <PolarGrid stroke="var(--border-color)" />
-                <PolarAngleAxis dataKey="category" tick={{ fill: 'var(--text-main)', fontSize: 12 }} />
-                <PolarRadiusAxis angle={30} domain={[0, 5]} stroke="var(--border-color)" />
-                <Radar name="Rating" dataKey="rating" stroke="var(--accent)" fill="var(--accent)" fillOpacity={0.4} />
-              </RadarChart>
-            </ResponsiveContainer>
+        <div className="h-72 w-full flex items-center justify-center">
+          {hasRadarData ? (
+            <Radar data={radarChartData} options={radarOptions} />
           ) : (
-            <div className="h-full flex items-center justify-center text-xs opacity-60">
-              No category ratings recorded yet.
-            </div>
+            <p className="text-xs opacity-60">No category ratings recorded yet.</p>
           )}
         </div>
       </div>
@@ -125,29 +194,11 @@ export default function JournalAnalyticsCharts({ entries = [], categories = [] }
           </div>
         </div>
 
-        <div className="h-72 w-full">
-          {distributionData.length > 0 ? (
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={distributionData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="var(--border-color)" opacity={0.4} />
-                <XAxis dataKey="rating" stroke="var(--text-main)" fontSize={12} />
-                <YAxis stroke="var(--text-main)" fontSize={12} />
-                <Tooltip 
-                  contentStyle={{ 
-                    backgroundColor: 'var(--card-bg)', 
-                    borderColor: 'var(--border-color)', 
-                    borderRadius: '12px',
-                    color: 'var(--text-main)',
-                    fontSize: '12px'
-                  }} 
-                />
-                <Bar dataKey="count" fill="var(--accent)" radius={[8, 8, 0, 0]} />
-              </BarChart>
-            </ResponsiveContainer>
+        <div className="h-72 w-full flex items-center justify-center">
+          {hasBarData ? (
+            <Bar data={barChartData} options={barOptions} />
           ) : (
-            <div className="h-full flex items-center justify-center text-xs opacity-60">
-              No rating distribution data available.
-            </div>
+            <p className="text-xs opacity-60">No rating distribution data available.</p>
           )}
         </div>
       </div>

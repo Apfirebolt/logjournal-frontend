@@ -171,11 +171,11 @@ const Header = () => {
                 </li>
                 <li>
                   <Link 
-                    href="/journal/analytics" 
+                    href="/analytics" 
                     className={`px-4 py-2 rounded-xl font-medium text-sm flex items-center space-x-2 transition-all whitespace-nowrap ${
-                      pathname === '/journal/analytics' ? 'shadow-sm' : 'opacity-80 hover:opacity-100 hover:bg-black/5 dark:hover:bg-white/5'
+                      pathname === '/analytics' ? 'shadow-sm' : 'opacity-80 hover:opacity-100 hover:bg-black/5 dark:hover:bg-white/5'
                     }`}
-                    style={pathname === '/journal/analytics' ? { backgroundColor: 'var(--accent)', color: 'var(--bg-primary)' } : { color: 'var(--text-main)' }}
+                    style={pathname === '/analytics' ? { backgroundColor: 'var(--accent)', color: 'var(--bg-primary)' } : { color: 'var(--text-main)' }}
                   >
                     <ChartBarIcon className="h-4 w-4" />
                     <span>Analytics</span>
@@ -382,9 +382,9 @@ const Header = () => {
               </Link>
 
               <Link
-                href="/journal/analytics"
+                href="/analytics"
                 className="flex items-center gap-3 px-4 py-3 rounded-xl font-medium text-sm transition-colors"
-                style={pathname === '/journal/analytics' ? { backgroundColor: 'var(--accent)', color: 'var(--bg-primary)' } : { color: 'var(--text-main)' }}
+                style={pathname === '/analytics' ? { backgroundColor: 'var(--accent)', color: 'var(--bg-primary)' } : { color: 'var(--text-main)' }}
               >
                 <ChartBarIcon className="h-5 w-5" />
                 <span>Analytics</span>
