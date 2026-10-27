@@ -1,6 +1,10 @@
+'use client';
+
+import React, { useEffect } from "react";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import Link from "next/link";
+import { useAuthStore } from "@/store/useAuthStore";
 import { 
   SparklesIcon, 
   PencilSquareIcon, 
@@ -8,16 +12,16 @@ import {
   ChartBarIcon, 
   ArrowRightIcon, 
   BookOpenIcon,
-  HeartIcon,
   LightBulbIcon
 } from "@heroicons/react/24/outline";
 
-export const metadata = {
-  title: "LogJournal | Mindful Daily Journaling & Reflection",
-  description: "Track your daily life, rate performance across categories like work, health, and friends, and reflect with custom block-based prompts.",
-};
-
 export default function Home() {
+  const { user, isAuthenticated, initializeAuth } = useAuthStore();
+
+  useEffect(() => {
+    initializeAuth();
+  }, [initializeAuth]);
+
   return (
     <div className="min-h-screen flex flex-col font-theme-body transition-colors duration-300"
       style={{
@@ -28,32 +32,43 @@ export default function Home() {
       <Header />
 
       <main className="flex-grow">
-        {/* Hero Section */}
-        <section className="relative overflow-hidden py-24 lg:py-32 px-6">
+        {/* Hero Section with Unsplash Background Image */}
+        <section className="relative overflow-hidden py-24 lg:py-36 px-6 flex items-center justify-center">
+          {/* Unsplash Background Image with Overlay */}
+          <div className="absolute inset-0 z-0">
+            <img 
+              src="https://images.unsplash.com/photo-1517842645767-c639042777db?auto=format&fit=crop&w=2070&q=80" 
+              alt="Journaling and coffee background" 
+              className="w-full h-full object-cover object-center transform scale-105 filter brightness-75 dark:brightness-50"
+            />
+            {/* Gradient / Dark Readability Overlay */}
+            <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/50 to-black/70 backdrop-blur-[2px]" />
+          </div>
+
           {/* Subtle background glow effect using theme accent */}
           <div 
-            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] blur-[150px] rounded-full pointer-events-none opacity-20"
+            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] blur-[150px] rounded-full pointer-events-none opacity-30 z-0"
             style={{ backgroundColor: 'var(--accent)' }}
           />
 
           <div className="max-w-5xl mx-auto text-center relative z-10 space-y-8">
             <div 
-              className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border text-sm font-medium backdrop-blur-sm shadow-sm"
+              className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border text-sm font-medium backdrop-blur-md shadow-lg"
               style={{
-                backgroundColor: 'var(--card-bg)',
-                borderColor: 'var(--border-color)',
-                color: 'var(--accent)'
+                backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                borderColor: 'rgba(255, 255, 255, 0.2)',
+                color: '#ffffff'
               }}
             >
-              <SparklesIcon className="h-4 w-4" />
-              <span>Mindfulness & Productivity Combined</span>
+              <SparklesIcon className="h-4 w-4" style={{ color: 'var(--accent)' }} />
+              <span>{isAuthenticated && user ? `Welcome back, ${user.name || user.email || 'Friend'}!` : 'Mindfulness & Productivity Combined'}</span>
             </div>
 
-            <h1 className="text-4xl sm:text-6xl lg:text-7xl font-bold font-theme-heading tracking-tight leading-tight">
+            <h1 className="text-4xl sm:text-6xl lg:text-7xl font-bold font-theme-heading tracking-tight leading-tight text-white drop-shadow-md">
               Capture Your Days, <span style={{ color: 'var(--accent)' }}>Reflect & Grow.</span>
             </h1>
 
-            <p className="text-lg sm:text-xl max-w-2xl mx-auto leading-relaxed opacity-80" style={{ color: 'var(--text-muted)' }}>
+            <p className="text-lg sm:text-xl max-w-2xl mx-auto leading-relaxed text-gray-200 drop-shadow">
               A flexible daily journal powered by custom categories, block-based rich text prompts, and daily category ratings to help you understand your patterns.
             </p>
 
@@ -61,7 +76,7 @@ export default function Home() {
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
               <Link
                 href="/journal/new"
-                className="w-full sm:w-auto px-8 py-4 rounded-2xl font-semibold font-theme-heading transition-all shadow-lg flex items-center justify-center gap-2 group hover:scale-105"
+                className="w-full sm:w-auto px-8 py-4 rounded-2xl font-semibold font-theme-heading transition-all shadow-xl flex items-center justify-center gap-2 group hover:scale-105"
                 style={{
                   backgroundColor: 'var(--accent)',
                   color: 'var(--bg-primary)',
@@ -74,16 +89,29 @@ export default function Home() {
 
               <Link
                 href="/journal/entries"
-                className="w-full sm:w-auto px-8 py-4 rounded-2xl font-semibold font-theme-heading border transition-all flex items-center justify-center gap-2 hover:opacity-100 opacity-80"
+                className="w-full sm:w-auto px-8 py-4 rounded-2xl font-semibold font-theme-heading border transition-all flex items-center justify-center gap-2 backdrop-blur-md text-white hover:bg-white/10"
                 style={{
-                  backgroundColor: 'var(--card-bg)',
-                  borderColor: 'var(--border-color)',
-                  color: 'var(--text-main)',
+                  borderColor: 'rgba(255, 255, 255, 0.3)',
+                  backgroundColor: 'rgba(0, 0, 0, 0.3)',
                 }}
               >
                 <BookOpenIcon className="h-5 w-5" style={{ color: 'var(--accent)' }} />
                 <span>Browse Past Entries</span>
               </Link>
+
+              {isAuthenticated && (
+                <Link
+                  href="/journal/analytics"
+                  className="w-full sm:w-auto px-8 py-4 rounded-2xl font-semibold font-theme-heading border transition-all flex items-center justify-center gap-2 backdrop-blur-md text-white hover:bg-white/10"
+                  style={{
+                    borderColor: 'rgba(255, 255, 255, 0.3)',
+                    backgroundColor: 'rgba(0, 0, 0, 0.3)',
+                  }}
+                >
+                  <ChartBarIcon className="h-5 w-5" style={{ color: 'var(--accent)' }} />
+                  <span>View Analytics</span>
+                </Link>
+              )}
             </div>
           </div>
         </section>
