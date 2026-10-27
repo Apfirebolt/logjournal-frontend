@@ -68,7 +68,52 @@ export const useJournalStore = create((set, get) => ({
     }
   },
 
-  // 4. Fetch all available categories (system default + user custom)
+  // 4. Update an existing journal entry by ID
+  updateEntry: async (id, entryData) => {
+    set({ loading: true, error: null });
+    try {
+      const res = await httpClient.put(`/journal/entries/${id}`, entryData, getAuthHeaders());
+      const updatedEntry = res.data;
+
+      // Update in local state entries list and currentEntry
+      set((state) => ({
+        entries: state.entries.map((e) => (e.id === Number(id) ? updatedEntry : e)),
+        currentEntry: updatedEntry,
+        loading: false,
+      }));
+
+      return { success: true, data: updatedEntry };
+    } catch (err) {
+      const detail = err.response?.data?.detail;
+      const errorMsg = typeof detail === 'string' ? detail : (detail?.[0]?.msg || err.message || "Failed to update journal entry.");
+      set({ error: errorMsg, loading: false });
+      return { success: false, error: errorMsg };
+    }
+  },
+
+  // 5. Delete a journal entry by ID
+  deleteEntry: async (id) => {
+    set({ loading: true, error: null });
+    try {
+      await httpClient.delete(`/journal/entries/${id}`, getAuthHeaders());
+
+      // Remove from local state entries list and clear currentEntry if it matches
+      set((state) => ({
+        entries: state.entries.filter((e) => e.id !== Number(id)),
+        currentEntry: state.currentEntry?.id === Number(id) ? null : state.currentEntry,
+        loading: false,
+      }));
+
+      return { success: true };
+    } catch (err) {
+      const detail = err.response?.data?.detail;
+      const errorMsg = typeof detail === 'string' ? detail : (detail?.[0]?.msg || err.message || "Failed to delete journal entry.");
+      set({ error: errorMsg, loading: false });
+      return { success: false, error: errorMsg };
+    }
+  },
+
+  // 6. Fetch all available categories (system default + user custom)
   fetchCategories: async () => {
     set({ loading: true, error: null });
     try {
@@ -83,7 +128,7 @@ export const useJournalStore = create((set, get) => ({
     }
   },
 
-  // 5. Add a custom category
+  // 7. Add a custom category
   // payload expects: { name: "Coding" }
   createCategory: async (categoryData) => {
     set({ loading: true, error: null });
