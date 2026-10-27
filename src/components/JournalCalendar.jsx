@@ -2,6 +2,7 @@
 
 import { useState, Fragment } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { 
   ChevronLeftIcon, 
   ChevronRightIcon, 
@@ -21,6 +22,7 @@ const MONTH_NAMES = [
 const DAY_NAMES = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
 export default function JournalCalendar({ entries = [], onSelectDate }) {
+  const router = useRouter();
   const [currentDate, setCurrentDate] = useState(new Date());
 
   // Modal State for Day Details Inspection
@@ -43,25 +45,31 @@ export default function JournalCalendar({ entries = [], onSelectDate }) {
     setCurrentDate(new Date(year, month + 1, 1));
   };
 
-  // Map entries to YYYY-MM-DD keys for fast lookup
+  // Map entries to YYYY-MM-DD keys prioritizing journal_date, falling back to created_at
   const entryMap = {};
 
   entries.forEach((entry) => {
-    const timestamp = entry.created_at || entry.createdAt;
-    if (!timestamp) return;
-    const dateStr = new Date(timestamp).toISOString().split('T')[0];
+    const rawDate = entry.journal_date || entry.created_at || entry.createdAt;
+    if (!rawDate) return;
+    const dateStr = new Date(rawDate).toISOString().split('T')[0];
     if (!entryMap[dateStr]) {
       entryMap[dateStr] = [];
     }
     entryMap[dateStr].push(entry);
   });
 
-  // Handle cell click to open day inspection modal
+  // Handle cell click
   const handleCellClick = (dateKey, dayEntries) => {
-    setSelectedDayData({ dateStr: dateKey, entries: dayEntries });
-    setIsDayModalOpen(true);
-    if (onSelectDate) {
-      onSelectDate(dateKey, dayEntries);
+    if (dayEntries.length > 0) {
+      // If entries exist, open inspection modal
+      setSelectedDayData({ dateStr: dateKey, entries: dayEntries });
+      setIsDayModalOpen(true);
+      if (onSelectDate) {
+        onSelectDate(dateKey, dayEntries);
+      }
+    } else {
+      // If no entries exist, navigate to new entry page with pre-selected date
+      router.push(`/journal/new?date=${dateKey}`);
     }
   };
 
@@ -95,18 +103,18 @@ export default function JournalCalendar({ entries = [], onSelectDate }) {
     calendarCells.push(
       <div
         key={dateKey}
-        onClick={() => hasActivity && handleCellClick(dateKey, dayEntries)}
-        className={`h-32 p-3 rounded-2xl border transition-all duration-300 flex flex-col justify-between group relative overflow-hidden ${
+        onClick={() => handleCellClick(dateKey, dayEntries)}
+        className={`h-32 p-3 rounded-2xl border transition-all duration-300 flex flex-col justify-between group relative overflow-hidden cursor-pointer ${
           isToday 
             ? 'shadow-md ring-2 ring-[var(--accent)]' 
             : hasActivity 
-              ? 'hover:-translate-y-0.5 hover:shadow-xl shadow-sm cursor-pointer' 
-              : 'opacity-70'
+              ? 'hover:-translate-y-0.5 hover:shadow-xl shadow-sm' 
+              : 'hover:border-[var(--accent)] hover:opacity-100 opacity-70'
         }`}
         style={{
           backgroundColor: isToday ? 'var(--card-bg)' : hasActivity ? 'var(--card-bg)' : 'var(--bg-primary)',
           borderColor: isToday ? 'var(--accent)' : hasActivity ? 'var(--accent)' : 'var(--border-color)',
-          opacity: hasActivity || isToday ? 1 : 0.6
+          opacity: hasActivity || isToday ? 1 : 0.65
         }}
       >
         {/* Top: Date Number & Status Pill */}
@@ -136,8 +144,8 @@ export default function JournalCalendar({ entries = [], onSelectDate }) {
               {dayEntries.length} {dayEntries.length === 1 ? 'Entry' : 'Entries'}
             </span>
           ) : (
-            <span className="text-[9px] uppercase tracking-wider opacity-40 font-mono" style={{ color: 'var(--text-muted)' }}>
-              Missed
+            <span className="text-[9px] uppercase tracking-wider opacity-40 font-mono group-hover:opacity-80 transition-opacity" style={{ color: 'var(--text-muted)' }}>
+              + Write
             </span>
           )}
         </div>
@@ -164,8 +172,8 @@ export default function JournalCalendar({ entries = [], onSelectDate }) {
             )}
           </div>
         ) : (
-          <div className="my-auto text-center text-[10px] italic font-theme-body select-none opacity-40" style={{ color: 'var(--text-muted)' }}>
-            No journal written
+          <div className="my-auto text-center text-[10px] italic font-theme-body select-none opacity-40 group-hover:opacity-80 transition-opacity" style={{ color: 'var(--text-muted)' }}>
+            Click to add journal
           </div>
         )}
 
@@ -208,7 +216,7 @@ export default function JournalCalendar({ entries = [], onSelectDate }) {
           <div className="flex items-center gap-1.5 p-1 rounded-2xl border" style={{ backgroundColor: 'var(--bg-primary)', borderColor: 'var(--border-color)' }}>
             <button
               onClick={prevMonth}
-              className="p-2 rounded-xl border transition-all active:scale-95"
+              className="p-2 rounded-xl border transition-all active:scale-95 cursor-pointer"
               style={{ backgroundColor: 'var(--card-bg)', borderColor: 'var(--border-color)', color: 'var(--text-main)' }}
               aria-label="Previous Month"
             >
@@ -217,7 +225,7 @@ export default function JournalCalendar({ entries = [], onSelectDate }) {
             
             <button
               onClick={() => setCurrentDate(new Date())}
-              className="px-3 py-2 rounded-xl text-xs font-bold border transition-all active:scale-95"
+              className="px-3 py-2 rounded-xl text-xs font-bold border transition-all active:scale-95 cursor-pointer"
               style={{ backgroundColor: 'var(--card-bg)', borderColor: 'var(--border-color)', color: 'var(--accent)' }}
             >
               Today
@@ -225,7 +233,7 @@ export default function JournalCalendar({ entries = [], onSelectDate }) {
 
             <button
               onClick={nextMonth}
-              className="p-2 rounded-xl border transition-all active:scale-95"
+              className="p-2 rounded-xl border transition-all active:scale-95 cursor-pointer"
               style={{ backgroundColor: 'var(--card-bg)', borderColor: 'var(--border-color)', color: 'var(--text-main)' }}
               aria-label="Next Month"
             >
@@ -314,7 +322,7 @@ export default function JournalCalendar({ entries = [], onSelectDate }) {
                         key={entry.id || idx}
                         href={`/journal/entries/${entry.id}`}
                         onClick={() => setIsDayModalOpen(false)}
-                        className="p-4 rounded-2xl border flex items-center justify-between gap-4 transition-all hover:scale-[1.01] group"
+                        className="p-4 rounded-2xl border flex items-center justify-between gap-4 transition-all hover:scale-[1.01] group cursor-pointer"
                         style={{ backgroundColor: 'var(--bg-primary)', borderColor: 'var(--border-color)' }}
                       >
                         <div className="space-y-1">
@@ -339,7 +347,16 @@ export default function JournalCalendar({ entries = [], onSelectDate }) {
                   </div>
 
                   {/* Footer */}
-                  <div className="pt-2 border-t flex justify-end" style={{ borderColor: 'var(--border-color)' }}>
+                  <div className="pt-2 border-t flex items-center justify-between" style={{ borderColor: 'var(--border-color)' }}>
+                    <Link
+                      href={`/journal/new?date=${selectedDayData?.dateStr}`}
+                      onClick={() => setIsDayModalOpen(false)}
+                      className="px-4 py-2.5 rounded-xl text-xs font-bold border transition-all shadow-sm hover:opacity-90 flex items-center gap-1.5"
+                      style={{ backgroundColor: 'var(--bg-primary)', borderColor: 'var(--border-color)', color: 'var(--accent)' }}
+                    >
+                      <span>+ Add Another Entry for this Date</span>
+                    </Link>
+
                     <button
                       onClick={() => setIsDayModalOpen(false)}
                       className="px-5 py-2.5 rounded-xl text-xs font-bold transition-all shadow-md cursor-pointer hover:opacity-90"

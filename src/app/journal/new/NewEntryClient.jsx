@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import AuthGuard from '@/components/AuthGuard';
@@ -13,10 +13,20 @@ import AOS from 'aos';
 
 export default function NewEntryClient() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { categories, fetchCategories, createEntry, loading } = useJournalStore();
 
   const [title, setTitle] = useState('');
-  const [journalDate, setJournalDate] = useState(new Date().toISOString().split('T')[0]);
+  
+  // Check for 'date' query param from calendar click, fallback to today's date
+  const [journalDate, setJournalDate] = useState(() => {
+    const paramDate = searchParams.get('date');
+    if (paramDate) {
+      return paramDate;
+    }
+    return new Date().toISOString().split('T')[0];
+  });
+
   const [categoryRatings, setCategoryRatings] = useState({});
   const [habits, setHabits] = useState([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -153,7 +163,7 @@ export default function NewEntryClient() {
         gratitude: gratitudeData ? JSON.stringify(gratitudeData.blocks) : '',
         better_day_thoughts: thoughtsData ? JSON.stringify(thoughtsData.blocks) : '',
         category_sections,
-        habits, // Included habits array
+        habits,
       };
 
       const result = await createEntry(payload);
@@ -195,7 +205,7 @@ export default function NewEntryClient() {
               </div>
               <h1 className="text-3xl font-bold font-theme-heading tracking-tight">New Journal Entry</h1>
               <p className="text-sm opacity-80 mt-1" style={{ color: 'var(--text-muted)' }}>
-                Capture your daily milestones, gratitude, and category ratings.
+                Capture your daily milestones, gratitude, and category ratings for {journalDate}.
               </p>
             </div>
 
