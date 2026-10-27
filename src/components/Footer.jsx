@@ -26,7 +26,7 @@ const Footer = () => {
                 <BookOpenIcon className="h-4 w-4" />
               </div>
               <span className="text-xl font-bold font-theme-heading tracking-tight" style={{ color: 'var(--text-main)' }}>
-                Log<span style={{ color: 'var(--accent)' }}>Journal</span>
+                Softgenie <span style={{ color: 'var(--accent)' }}> Journal</span>
               </span>
             </Link>
             <p className="text-sm leading-relaxed font-theme-body opacity-80" style={{ color: 'var(--text-muted)' }}>
@@ -126,7 +126,7 @@ const Footer = () => {
           className="border-t pt-6 mt-6 flex flex-col md:flex-row justify-between items-center text-xs font-theme-body gap-4 opacity-75"
           style={{ borderColor: 'var(--border-color)', color: 'var(--text-muted)' }}
         >
-          <p>&copy; {new Date().getFullYear()} LogJournal Platform. All rights reserved.</p>
+          <p>&copy; {new Date().getFullYear()} Softgenie Journal Platform. All rights reserved.</p>
           
           <div className="flex space-x-6">
             <Link href="/privacy" className="hover:opacity-100 transition-opacity">
