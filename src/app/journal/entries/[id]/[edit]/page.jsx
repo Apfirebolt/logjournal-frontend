@@ -7,7 +7,7 @@ import Footer from '@/components/Footer';
 import AuthGuard from '@/components/AuthGuard';
 import HabitChecklist from '@/components/HabitCheckList';
 import { useJournalStore } from '@/store/useJournalStore';
-import { PencilSquareIcon, CheckIcon, StarIcon, ArrowLeftIcon } from '@heroicons/react/24/outline';
+import { PencilSquareIcon, CheckIcon, StarIcon, ArrowLeftIcon, TagIcon, CalendarIcon } from '@heroicons/react/24/outline';
 import { toast } from 'react-toastify';
 
 export default function EditEntryPage() {
@@ -18,6 +18,7 @@ export default function EditEntryPage() {
   const { currentEntry, fetchEntryById, updateEntry, categories, fetchCategories, loading } = useJournalStore();
 
   const [title, setTitle] = useState('');
+  const [journalDate, setJournalDate] = useState('');
   const [categoryRatings, setCategoryRatings] = useState({});
   const [habits, setHabits] = useState([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -25,11 +26,13 @@ export default function EditEntryPage() {
   const highlightsEditorRef = useRef(null);
   const gratitudeEditorRef = useRef(null);
   const thoughtsEditorRef = useRef(null);
+  const categoryEditorsRefs = useRef({}); // { [categoryId]: DOM element ref }
 
   const editorInstanceRef = useRef({
     highlights: null,
     gratitude: null,
     thoughts: null,
+    categories: {}, // { [categoryId]: EditorJS instance }
   });
 
   useEffect(() => {
@@ -43,11 +46,19 @@ export default function EditEntryPage() {
   useEffect(() => {
     if (currentEntry) {
       setTitle(currentEntry.title || '');
+      if (currentEntry.journal_date) {
+        setJournalDate(new Date(currentEntry.journal_date).toISOString().split('T')[0]);
+      }
 
-      // Map existing category ratings
+      // Map existing category ratings and pre-load content blocks if available
       const initialRatings = {};
+      const initialCategoryBlocks = {};
+      
       currentEntry.category_sections?.forEach((sec) => {
         initialRatings[sec.category_id] = sec.rating_score;
+        if (sec.content) {
+          initialCategoryBlocks[sec.category_id] = typeof sec.content === 'string' ? JSON.parse(sec.content) : sec.content;
+        }
       });
       setCategoryRatings(initialRatings);
 
@@ -71,9 +82,9 @@ export default function EditEntryPage() {
         const parseBlocks = (dataStr) => {
           if (!dataStr) return [];
           try {
-            return JSON.parse(dataStr);
+            return typeof dataStr === 'string' ? JSON.parse(dataStr) : dataStr;
           } catch (e) {
-            return [{ type: 'paragraph', data: { text: dataStr } }];
+            return [{ type: 'paragraph', data: { text: String(dataStr) } }];
           }
         };
 
@@ -100,11 +111,24 @@ export default function EditEntryPage() {
             tools: { header: HeaderBlock, paragraph: ParagraphBlock, list: ListBlock },
           });
         }
+
+        // Initialize Dynamic Category Editors with pre-existing content blocks
+        categories.forEach((cat) => {
+          const holderElement = categoryEditorsRefs.current[cat.id];
+          if (holderElement && !editorInstanceRef.current.categories[cat.id]) {
+            editorInstanceRef.current.categories[cat.id] = new EditorJS({
+              holder: holderElement,
+              data: { blocks: initialCategoryBlocks[cat.id] || [] },
+              placeholder: `Record notes, activities, or reflections for ${cat.name}...`,
+              tools: { header: HeaderBlock, paragraph: ParagraphBlock, list: ListBlock, marker: MarkerBlock },
+            });
+          }
+        });
       }
 
       initEditors();
     }
-  }, [currentEntry]);
+  }, [currentEntry, categories]);
 
   const handleRatingChange = (categoryId, score) => {
     setCategoryRatings((prev) => ({ ...prev, [categoryId]: score }));
@@ -124,14 +148,30 @@ export default function EditEntryPage() {
       const gratitudeData = editorInstanceRef.current.gratitude ? await editorInstanceRef.current.gratitude.save() : null;
       const thoughtsData = editorInstanceRef.current.thoughts ? await editorInstanceRef.current.thoughts.save() : null;
 
-      const category_sections = Object.entries(categoryRatings).map(([catId, score]) => ({
-        category_id: parseInt(catId),
-        rating_score: parseFloat(score),
-        content: { note: `Rated ${score}/5 stars` },
-      }));
+      // Gather category sections with both their rich text content blocks and rating scores
+      const category_sections = [];
+      for (const cat of categories) {
+        const editorInstance = editorInstanceRef.current.categories[cat.id];
+        let categoryBlocks = [];
+        if (editorInstance) {
+          const savedData = await editorInstance.save();
+          categoryBlocks = savedData.blocks || [];
+        }
+
+        const rating = categoryRatings[cat.id] || null;
+
+        if (categoryBlocks.length > 0 || rating !== null) {
+          category_sections.push({
+            category_id: cat.id,
+            rating_score: rating ? parseFloat(rating) : null,
+            content: categoryBlocks,
+          });
+        }
+      }
 
       const payload = {
         title: title.trim(),
+        journal_date: journalDate ? new Date(journalDate).toISOString() : null,
         highlights: highlightsData ? JSON.stringify(highlightsData.blocks) : '',
         gratitude: gratitudeData ? JSON.stringify(gratitudeData.blocks) : '',
         better_day_thoughts: thoughtsData ? JSON.stringify(thoughtsData.blocks) : '',
@@ -202,6 +242,23 @@ export default function EditEntryPage() {
           </div>
 
           <form onSubmit={handleUpdate} className="space-y-8">
+            
+            {/* Journal Date Input */}
+            <div className="space-y-2">
+              <label className="block text-xs font-bold uppercase tracking-wider font-theme-heading opacity-80 flex items-center gap-1.5">
+                <CalendarIcon className="h-4 w-4" style={{ color: 'var(--accent)' }} />
+                <span>Journal Date</span>
+              </label>
+              <input
+                type="date"
+                value={journalDate}
+                onChange={(e) => setJournalDate(e.target.value)}
+                className="w-full px-4 py-3.5 rounded-2xl border text-sm focus:outline-none shadow-inner font-theme-heading font-semibold"
+                style={{ backgroundColor: 'var(--card-bg)', borderColor: 'var(--border-color)', color: 'var(--text-main)' }}
+                required
+              />
+            </div>
+
             <div className="space-y-2">
               <label className="block text-xs font-bold uppercase tracking-wider font-theme-heading opacity-80">Entry Title</label>
               <input
@@ -232,28 +289,61 @@ export default function EditEntryPage() {
             {/* Habit Checklist Component Integration */}
             <HabitChecklist habits={habits} onChange={setHabits} />
 
-            <div className="space-y-4 pt-4 border-t" style={{ borderColor: 'var(--border-color)' }}>
-              <h2 className="text-lg font-bold font-theme-heading">Category & Pillar Ratings</h2>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {/* Dynamic Category Sections & Ratings */}
+            <div className="space-y-6 pt-4 border-t" style={{ borderColor: 'var(--border-color)' }}>
+              <div>
+                <h2 className="text-lg font-bold font-theme-heading">Category & Pillar Sections</h2>
+                <p className="text-xs opacity-75 mt-0.5" style={{ color: 'var(--text-muted)' }}>
+                  Refine rich notes, logs, or schedules for your custom pillars and update your performance ratings.
+                </p>
+              </div>
+
+              <div className="space-y-6">
                 {categories.map((cat) => (
-                  <div key={cat.id} className="p-4 rounded-2xl border flex items-center justify-between shadow-sm" style={{ backgroundColor: 'var(--card-bg)', borderColor: 'var(--border-color)' }}>
-                    <span className="text-sm font-semibold">{cat.name}</span>
-                    <div className="flex items-center gap-1.5">
-                      {[1, 2, 3, 4, 5].map((star) => (
-                        <button
-                          type="button"
-                          key={star}
-                          onClick={() => handleRatingChange(cat.id, star)}
-                          className="p-1 transition-transform hover:scale-110 focus:outline-none cursor-pointer"
-                        >
-                          <StarIcon className={`h-5 w-5 ${(categoryRatings[cat.id] || 0) >= star ? 'text-amber-400 fill-amber-400' : 'opacity-30'}`} />
-                        </button>
-                      ))}
+                  <div 
+                    key={cat.id}
+                    className="p-6 rounded-3xl border shadow-sm space-y-4"
+                    style={{ backgroundColor: 'var(--card-bg)', borderColor: 'var(--border-color)' }}
+                  >
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b pb-3" style={{ borderColor: 'var(--border-color)' }}>
+                      <div className="flex items-center gap-2">
+                        <TagIcon className="h-5 w-5" style={{ color: 'var(--accent)' }} />
+                        <h3 className="text-sm font-bold font-theme-heading uppercase tracking-wider">{cat.name}</h3>
+                      </div>
+
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs font-bold uppercase tracking-wider opacity-60">Pillar Rating:</span>
+                        <div className="flex items-center gap-1">
+                          {[1, 2, 3, 4, 5].map((star) => (
+                            <button
+                              type="button"
+                              key={star}
+                              onClick={() => handleRatingChange(cat.id, star)}
+                              className="p-1 transition-transform hover:scale-110 focus:outline-none cursor-pointer"
+                            >
+                              <StarIcon 
+                                className={`h-5 w-5 ${
+                                  (categoryRatings[cat.id] || 0) >= star 
+                                    ? 'text-amber-400 fill-amber-400' 
+                                    : 'opacity-30'
+                                }`}
+                              />
+                            </button>
+                          ))}
+                        </div>
+                      </div>
                     </div>
+
+                    <div 
+                      ref={(el) => { categoryEditorsRefs.current[cat.id] = el; }}
+                      className="p-6 rounded-2xl border shadow-inner min-h-[140px]"
+                      style={{ backgroundColor: 'var(--bg-primary)', borderColor: 'var(--border-color)' }}
+                    />
                   </div>
                 ))}
               </div>
             </div>
+
           </form>
         </main>
 

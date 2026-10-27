@@ -30,13 +30,19 @@ export default function EntryDetailPage() {
     }
   }, [entryId, fetchEntryById]);
 
-  // Helper to safely render Editor.js JSON blocks into beautifully styled HTML/JSX elements
-  const renderEditorBlocks = (jsonString) => {
-    if (!jsonString) return <p className="text-sm opacity-60 italic">No content provided.</p>;
+  // Helper to safely render Editor.js JSON blocks (handles both stringified JSON and arrays) into styled JSX
+  const renderEditorBlocks = (input) => {
+    if (!input) return <p className="text-sm opacity-60 italic">No content provided.</p>;
     
     try {
-      const blocks = JSON.parse(jsonString);
-      if (!Array.isArray(blocks)) return <p className="text-sm sm:text-base leading-relaxed opacity-90 font-theme-body">{jsonString}</p>;
+      const blocks = typeof input === 'string' ? JSON.parse(input) : input;
+      if (!Array.isArray(blocks)) {
+        return <p className="text-sm sm:text-base leading-relaxed opacity-90 font-theme-body" style={{ color: 'var(--text-main)' }}>{typeof input === 'string' ? input : JSON.stringify(input)}</p>;
+      }
+
+      if (blocks.length === 0) {
+        return <p className="text-sm opacity-60 italic">No content recorded in this section.</p>;
+      }
 
       return blocks.map((block, index) => {
         switch (block.type) {
@@ -139,7 +145,7 @@ export default function EntryDetailPage() {
         }
       });
     } catch (e) {
-      return <p className="text-sm sm:text-base leading-relaxed opacity-90 font-theme-body">{jsonString}</p>;
+      return <p className="text-sm sm:text-base leading-relaxed opacity-90 font-theme-body">{String(input)}</p>;
     }
   };
 
@@ -314,25 +320,36 @@ export default function EntryDetailPage() {
               </div>
             )}
 
-            {/* Category Sections & Ratings */}
+            {/* Custom Category & Pillar Sections (Rich Content + Rating) */}
             {currentEntry.category_sections && currentEntry.category_sections.length > 0 && (
-              <div className="space-y-4 pt-4 border-t" style={{ borderColor: 'var(--border-color)' }}>
-                <h3 className="text-lg font-bold font-theme-heading">Category Ratings</h3>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="space-y-6 pt-4 border-t" style={{ borderColor: 'var(--border-color)' }}>
+                <h3 className="text-lg font-bold font-theme-heading">Category & Pillar Sections</h3>
+                <div className="space-y-6">
                   {currentEntry.category_sections.map((section, idx) => (
                     <div 
-                      key={idx}
-                      className="p-4 rounded-2xl border flex items-center justify-between shadow-sm"
+                      key={section.id || idx}
+                      className="p-8 rounded-3xl border shadow-sm space-y-4"
                       style={{ backgroundColor: 'var(--card-bg)', borderColor: 'var(--border-color)' }}
                     >
-                      <div className="flex items-center gap-2">
-                        <TagIcon className="h-4 w-4 opacity-50" style={{ color: 'var(--accent)' }} />
-                        <span className="text-sm font-semibold">{section.category_name || 'Category'}</span>
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b pb-3" style={{ borderColor: 'var(--border-color)' }}>
+                        <div className="flex items-center gap-2">
+                          <TagIcon className="h-5 w-5" style={{ color: 'var(--accent)' }} />
+                          <h3 className="text-sm font-bold font-theme-heading uppercase tracking-wider">{section.category_name || 'Category'}</h3>
+                        </div>
+
+                        {section.rating_score !== null && section.rating_score !== undefined && (
+                          <div className="flex items-center gap-1.5">
+                            <span className="text-xs font-bold uppercase tracking-wider opacity-60">Rating:</span>
+                            <div className="flex items-center gap-1">
+                              <StarIcon className="h-4 w-4 text-amber-400 fill-amber-400" />
+                              <span className="text-xs font-bold">{section.rating_score} / 5</span>
+                            </div>
+                          </div>
+                        )}
                       </div>
 
-                      <div className="flex items-center gap-1">
-                        <StarIcon className="h-4 w-4 text-amber-400 fill-amber-400" />
-                        <span className="text-sm font-bold">{section.rating_score || 0} / 5</span>
+                      <div className="leading-relaxed">
+                        {renderEditorBlocks(section.content)}
                       </div>
                     </div>
                   ))}

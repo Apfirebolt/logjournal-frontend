@@ -7,7 +7,7 @@ import Footer from '@/components/Footer';
 import AuthGuard from '@/components/AuthGuard';
 import HabitChecklist from '@/components/HabitCheckList';
 import { useJournalStore } from '@/store/useJournalStore';
-import { PencilSquareIcon, CheckIcon, StarIcon, CalendarIcon } from '@heroicons/react/24/outline';
+import { PencilSquareIcon, CheckIcon, StarIcon, CalendarIcon, TagIcon } from '@heroicons/react/24/outline';
 import { toast } from 'react-toastify';
 import AOS from 'aos';
 
@@ -27,23 +27,24 @@ export default function NewEntryClient() {
     return new Date().toISOString().split('T')[0];
   });
 
-  const [categoryRatings, setCategoryRatings] = useState({});
+  const [categoryRatings, setCategoryRatings] = useState({}); // { [categoryId]: score }
   const [habits, setHabits] = useState([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Editor.js Refs for Highlights, Gratitude, and Thoughts
+  // Editor.js Refs for Highlights, Gratitude, Thoughts, and Dynamic Categories
   const highlightsEditorRef = useRef(null);
   const gratitudeEditorRef = useRef(null);
   const thoughtsEditorRef = useRef(null);
+  const categoryEditorsRefs = useRef({}); // { [categoryId]: DOM element ref }
 
   const editorInstanceRef = useRef({
     highlights: null,
     gratitude: null,
     thoughts: null,
+    categories: {}, // { [categoryId]: EditorJS instance }
   });
 
   useEffect(() => {
-    // Initialize AOS animations
     AOS.init({
       duration: 800,
       once: true,
@@ -52,7 +53,7 @@ export default function NewEntryClient() {
     fetchCategories();
   }, [fetchCategories]);
 
-  // Initialize Editor.js instances on mount
+  // Initialize Global Editors and Dynamic Category Editors
   useEffect(() => {
     let isMounted = true;
 
@@ -74,14 +75,7 @@ export default function NewEntryClient() {
         editorInstanceRef.current.highlights = new EditorJS({
           holder: highlightsEditorRef.current,
           placeholder: 'What were your main highlights today?',
-          tools: {
-            header: HeaderBlock,
-            paragraph: ParagraphBlock,
-            list: ListBlock,
-            delimiter: DelimiterBlock,
-            quote: QuoteBlock,
-            marker: MarkerBlock,
-          },
+          tools: { header: HeaderBlock, paragraph: ParagraphBlock, list: ListBlock, delimiter: DelimiterBlock, quote: QuoteBlock, marker: MarkerBlock },
         });
       }
 
@@ -90,12 +84,7 @@ export default function NewEntryClient() {
         editorInstanceRef.current.gratitude = new EditorJS({
           holder: gratitudeEditorRef.current,
           placeholder: 'What are you grateful for today?',
-          tools: {
-            header: HeaderBlock,
-            paragraph: ParagraphBlock,
-            list: ListBlock,
-            marker: MarkerBlock,
-          },
+          tools: { header: HeaderBlock, paragraph: ParagraphBlock, list: ListBlock, marker: MarkerBlock },
         });
       }
 
@@ -104,27 +93,47 @@ export default function NewEntryClient() {
         editorInstanceRef.current.thoughts = new EditorJS({
           holder: thoughtsEditorRef.current,
           placeholder: 'How could today have been even better?',
-          tools: {
-            header: HeaderBlock,
-            paragraph: ParagraphBlock,
-            list: ListBlock,
-          },
+          tools: { header: HeaderBlock, paragraph: ParagraphBlock, list: ListBlock },
         });
       }
+
+      // 4. Dynamic Category Editors
+      categories.forEach((cat) => {
+        const holderElement = categoryEditorsRefs.current[cat.id];
+        if (holderElement && !editorInstanceRef.current.categories[cat.id]) {
+          editorInstanceRef.current.categories[cat.id] = new EditorJS({
+            holder: holderElement,
+            placeholder: `Record notes, activities, or reflections for ${cat.name}...`,
+            tools: { header: HeaderBlock, paragraph: ParagraphBlock, list: ListBlock, marker: MarkerBlock },
+          });
+        }
+      });
     }
 
     initEditors();
 
     return () => {
       isMounted = false;
-      ['highlights', 'gratitude', 'thoughts'].forEach((key) => {
-        if (editorInstanceRef.current[key]?.destroy) {
-          editorInstanceRef.current[key].destroy();
-          editorInstanceRef.current[key] = null;
+      if (editorInstanceRef.current.highlights?.destroy) {
+        editorInstanceRef.current.highlights.destroy();
+        editorInstanceRef.current.highlights = null;
+      }
+      if (editorInstanceRef.current.gratitude?.destroy) {
+        editorInstanceRef.current.gratitude.destroy();
+        editorInstanceRef.current.gratitude = null;
+      }
+      if (editorInstanceRef.current.thoughts?.destroy) {
+        editorInstanceRef.current.thoughts.destroy();
+        editorInstanceRef.current.thoughts = null;
+      }
+      Object.keys(editorInstanceRef.current.categories).forEach((catId) => {
+        if (editorInstanceRef.current.categories[catId]?.destroy) {
+          editorInstanceRef.current.categories[catId].destroy();
+          delete editorInstanceRef.current.categories[catId];
         }
       });
     };
-  }, []);
+  }, [categories]);
 
   const handleRatingChange = (categoryId, score) => {
     setCategoryRatings((prev) => ({ ...prev, [categoryId]: score }));
@@ -150,11 +159,27 @@ export default function NewEntryClient() {
         ? await editorInstanceRef.current.thoughts.save()
         : null;
 
-      const category_sections = Object.entries(categoryRatings).map(([catId, score]) => ({
-        category_id: parseInt(catId),
-        rating_score: parseFloat(score),
-        content: { note: `Rated ${score}/5 stars` },
-      }));
+      // Gather category sections with both their rich text content blocks and rating scores
+      const category_sections = [];
+      for (const cat of categories) {
+        const editorInstance = editorInstanceRef.current.categories[cat.id];
+        let categoryBlocks = [];
+        if (editorInstance) {
+          const savedData = await editorInstance.save();
+          categoryBlocks = savedData.blocks || [];
+        }
+
+        const rating = categoryRatings[cat.id] || null;
+
+        // Only include if user wrote content or gave a rating
+        if (categoryBlocks.length > 0 || rating !== null) {
+          category_sections.push({
+            category_id: cat.id,
+            rating_score: rating ? parseFloat(rating) : null,
+            content: categoryBlocks, // Stored as JSONB in DB
+          });
+        }
+      }
 
       const payload = {
         title: title.trim(),
@@ -205,7 +230,7 @@ export default function NewEntryClient() {
               </div>
               <h1 className="text-3xl font-bold font-theme-heading tracking-tight">New Journal Entry</h1>
               <p className="text-sm opacity-80 mt-1" style={{ color: 'var(--text-muted)' }}>
-                Capture your daily milestones, gratitude, and category ratings for {journalDate}.
+                Capture your daily milestones, reflections, and category pillars for {journalDate}.
               </p>
             </div>
 
@@ -312,35 +337,58 @@ export default function NewEntryClient() {
               <HabitChecklist habits={habits} onChange={setHabits} />
             </div>
 
-            {/* Category Ratings Section */}
-            <div className="space-y-4 pt-4 border-t" style={{ borderColor: 'var(--border-color)' }} data-aos="fade-up" data-aos-delay="400">
-              <h2 className="text-lg font-bold font-theme-heading">Category & Pillar Ratings (1 - 5)</h2>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {/* Dynamic Category Sections & Ratings */}
+            <div className="space-y-6 pt-4 border-t" style={{ borderColor: 'var(--border-color)' }} data-aos="fade-up" data-aos-delay="400">
+              <div>
+                <h2 className="text-lg font-bold font-theme-heading">Category & Pillar Sections</h2>
+                <p className="text-xs opacity-75 mt-0.5" style={{ color: 'var(--text-muted)' }}>
+                  Add rich notes, logs, or schedules for your custom pillars and rate your performance.
+                </p>
+              </div>
+
+              <div className="space-y-6">
                 {categories.map((cat) => (
                   <div 
-                    key={cat.id} 
-                    className="p-4 rounded-2xl border flex items-center justify-between shadow-sm"
+                    key={cat.id}
+                    className="p-6 rounded-3xl border shadow-sm space-y-4"
                     style={{ backgroundColor: 'var(--card-bg)', borderColor: 'var(--border-color)' }}
                   >
-                    <span className="text-sm font-semibold">{cat.name}</span>
-                    <div className="flex items-center gap-1.5">
-                      {[1, 2, 3, 4, 5].map((star) => (
-                        <button
-                          type="button"
-                          key={star}
-                          onClick={() => handleRatingChange(cat.id, star)}
-                          className="p-1 transition-transform hover:scale-110 focus:outline-none cursor-pointer"
-                        >
-                          <StarIcon 
-                            className={`h-5 w-5 ${
-                              (categoryRatings[cat.id] || 0) >= star 
-                                ? 'text-amber-400 fill-amber-400' 
-                                : 'opacity-30'
-                            }`}
-                          />
-                        </button>
-                      ))}
+                    {/* Category Title & Rating Header */}
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b pb-3" style={{ borderColor: 'var(--border-color)' }}>
+                      <div className="flex items-center gap-2">
+                        <TagIcon className="h-5 w-5" style={{ color: 'var(--accent)' }} />
+                        <h3 className="text-sm font-bold font-theme-heading uppercase tracking-wider">{cat.name}</h3>
+                      </div>
+
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs font-bold uppercase tracking-wider opacity-60">Pillar Rating:</span>
+                        <div className="flex items-center gap-1">
+                          {[1, 2, 3, 4, 5].map((star) => (
+                            <button
+                              type="button"
+                              key={star}
+                              onClick={() => handleRatingChange(cat.id, star)}
+                              className="p-1 transition-transform hover:scale-110 focus:outline-none cursor-pointer"
+                            >
+                              <StarIcon 
+                                className={`h-5 w-5 ${
+                                  (categoryRatings[cat.id] || 0) >= star 
+                                    ? 'text-amber-400 fill-amber-400' 
+                                    : 'opacity-30'
+                                }`}
+                              />
+                            </button>
+                          ))}
+                        </div>
+                      </div>
                     </div>
+
+                    {/* Editor.js Block Container for this Category */}
+                    <div 
+                      ref={(el) => { categoryEditorsRefs.current[cat.id] = el; }}
+                      className="p-6 rounded-2xl border shadow-inner min-h-[140px]"
+                      style={{ backgroundColor: 'var(--bg-primary)', borderColor: 'var(--border-color)' }}
+                    />
                   </div>
                 ))}
               </div>
