@@ -1,18 +1,47 @@
 'use client';
 
-import React, { useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
+import ConfirmModal from '@/components/ConfirmModal';
 import { useJournalStore } from '@/store/useJournalStore';
-import { BookOpenIcon, PlusIcon, CalendarIcon, StarIcon, ArrowRightIcon } from '@heroicons/react/24/outline';
+import { BookOpenIcon, PlusIcon, CalendarIcon, StarIcon, ArrowRightIcon, TrashIcon } from '@heroicons/react/24/outline';
+import { toast } from 'react-toastify';
 
 export default function JournalEntriesPage() {
-  const { entries, fetchEntries, loading } = useJournalStore();
+  const { entries, fetchEntries, deleteEntry, loading } = useJournalStore();
+  
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [entryToDelete, setEntryToDelete] = useState(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   useEffect(() => {
     fetchEntries();
   }, [fetchEntries]);
+
+  const openDeleteModal = (e, entry) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setEntryToDelete(entry);
+    setDeleteModalOpen(true);
+  };
+
+  const handleDeleteConfirm = async () => {
+    if (!entryToDelete) return;
+
+    setIsDeleting(true);
+    const result = await deleteEntry(entryToDelete.id);
+    setIsDeleting(false);
+
+    if (result.success) {
+      toast.success('Journal entry deleted successfully.');
+      setDeleteModalOpen(false);
+      setEntryToDelete(null);
+    } else {
+      toast.error(result.error || 'Failed to delete journal entry.');
+    }
+  };
 
   // Helper to safely parse Editor.js JSON blocks for a quick preview excerpt
   const getExcerpt = (jsonString) => {
@@ -24,7 +53,6 @@ export default function JournalEntriesPage() {
         return firstText?.data?.text || 'Rich text entry recorded...';
       }
     } catch (e) {
-      // Fallback if stored as plain text
       return jsonString.substring(0, 100) + '...';
     }
     return 'Journal entry recorded...';
@@ -86,7 +114,7 @@ export default function JournalEntriesPage() {
               <Link
                 key={entry.id}
                 href={`/journal/entries/${entry.id}`}
-                className="p-6 rounded-3xl border shadow-sm transition-all hover:-translate-y-1 flex flex-col justify-between space-y-6 group"
+                className="p-6 rounded-3xl border shadow-sm transition-all hover:-translate-y-1 flex flex-col justify-between space-y-6 group relative"
                 style={{
                   backgroundColor: 'var(--card-bg)',
                   borderColor: 'var(--border-color)'
@@ -98,9 +126,18 @@ export default function JournalEntriesPage() {
                       <CalendarIcon className="h-3.5 w-3.5" />
                       <span>{new Date(entry.created_at || Date.now()).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
                     </div>
+
+                    {/* Delete Trigger Button */}
+                    <button
+                      onClick={(e) => openDeleteModal(e, entry)}
+                      className="p-2 rounded-xl text-rose-500 hover:bg-rose-500/10 transition-colors opacity-0 group-hover:opacity-100"
+                      title="Delete Entry"
+                    >
+                      <TrashIcon className="h-4 w-4" />
+                    </button>
                   </div>
 
-                  <h3 className="text-xl font-bold font-theme-heading group-hover:opacity-90 transition-opacity line-clamp-1" style={{ color: 'var(--text-main)' }}>
+                  <h3 className="text-xl font-bold font-theme-heading group-hover:opacity-90 transition-opacity line-clamp-1 pr-6" style={{ color: 'var(--text-main)' }}>
                     {entry.title}
                   </h3>
 
@@ -130,6 +167,18 @@ export default function JournalEntriesPage() {
         </div>
 
       </main>
+
+      {/* Confirmation Modal */}
+      <ConfirmModal
+        isOpen={deleteModalOpen}
+        onClose={() => setDeleteModalOpen(false)}
+        onConfirm={handleDeleteConfirm}
+        title="Delete Journal Entry"
+        message={`Are you sure you want to delete "${entryToDelete?.title || 'this entry'}"? This action cannot be undone.`}
+        confirmText="Delete Entry"
+        cancelText="Cancel"
+        loading={isDeleting}
+      />
 
       <Footer />
     </div>
