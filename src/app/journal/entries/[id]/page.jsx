@@ -117,6 +117,45 @@ export default function EntryDetailPage() {
               </blockquote>
             );
 
+          case 'code': {
+            const codeText = block.data.code;
+            if (!codeText) return null;
+
+            return (
+              <div key={index} className="my-6 rounded-2xl border overflow-hidden shadow-md font-mono text-xs sm:text-sm" style={{ backgroundColor: '#0D1117', borderColor: 'var(--border-color)' }}>
+                <div className="px-4 py-2 border-b flex items-center justify-between opacity-60 text-[10px] uppercase tracking-widest" style={{ borderColor: 'var(--border-color)', backgroundColor: '#161B22', color: '#8B949E' }}>
+                  <span>Code Snippet</span>
+                </div>
+                <pre className="p-4 overflow-x-auto text-[#C9D1D9]">
+                  <code>{codeText}</code>
+                </pre>
+              </div>
+            );
+          }
+
+          case 'table': {
+            const content = block.data.content; // 2D array of rows/cells
+            if (!content || content.length === 0) return null;
+
+            return (
+              <div key={index} className="my-6 overflow-x-auto rounded-2xl border" style={{ borderColor: 'var(--border-color)' }}>
+                <table className="w-full text-left border-collapse text-sm font-theme-body">
+                  <tbody>
+                    {content.map((row, rowIndex) => (
+                      <tr key={rowIndex} className="border-b" style={{ borderColor: 'var(--border-color)' }}>
+                        {row.map((cell, cellIndex) => (
+                          <td key={cellIndex} className="px-4 py-3 border-r last:border-r-0" style={{ borderColor: 'var(--border-color)', color: 'var(--text-main)' }}>
+                            {cell}
+                          </td>
+                        ))}
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            );
+          }
+
           case 'delimiter':
             return (
               <div key={index} className="flex items-center justify-center my-8">

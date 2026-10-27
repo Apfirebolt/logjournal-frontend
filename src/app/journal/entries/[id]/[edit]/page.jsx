@@ -67,7 +67,7 @@ export default function EditEntryPage() {
         setHabits(currentEntry.habits);
       }
 
-      // Initialize Editor.js with existing blocks if available
+      // Initialize Editor.js with Medium-style tools (Multi-level headers, tables, code, quotes)
       async function initEditors() {
         if (typeof window === 'undefined') return;
 
@@ -78,6 +78,34 @@ export default function EditEntryPage() {
         const DelimiterBlock = (await import('@editorjs/delimiter')).default;
         const QuoteBlock = (await import('@editorjs/quote')).default;
         const MarkerBlock = (await import('@editorjs/marker')).default;
+        const CodeBlock = (await import('@editorjs/code')).default;
+        const TableBlock = (await import('@editorjs/table')).default;
+
+        const editorTools = {
+          header: {
+            class: HeaderBlock,
+            config: {
+              levels: [2, 3, 4], // Medium style H2, H3, H4
+              defaultLevel: 2,
+            }
+          },
+          paragraph: {
+            class: ParagraphBlock,
+            inlineToolbar: true,
+          },
+          list: {
+            class: ListBlock,
+            inlineToolbar: true,
+          },
+          quote: {
+            class: QuoteBlock,
+            inlineToolbar: true,
+          },
+          delimiter: DelimiterBlock,
+          marker: MarkerBlock,
+          code: CodeBlock,
+          table: TableBlock,
+        };
 
         const parseBlocks = (dataStr) => {
           if (!dataStr) return [];
@@ -92,7 +120,7 @@ export default function EditEntryPage() {
           editorInstanceRef.current.highlights = new EditorJS({
             holder: highlightsEditorRef.current,
             data: { blocks: parseBlocks(currentEntry.highlights) },
-            tools: { header: HeaderBlock, paragraph: ParagraphBlock, list: ListBlock, delimiter: DelimiterBlock, quote: QuoteBlock, marker: MarkerBlock },
+            tools: editorTools,
           });
         }
 
@@ -100,7 +128,7 @@ export default function EditEntryPage() {
           editorInstanceRef.current.gratitude = new EditorJS({
             holder: gratitudeEditorRef.current,
             data: { blocks: parseBlocks(currentEntry.gratitude) },
-            tools: { header: HeaderBlock, paragraph: ParagraphBlock, list: ListBlock, marker: MarkerBlock },
+            tools: editorTools,
           });
         }
 
@@ -108,7 +136,7 @@ export default function EditEntryPage() {
           editorInstanceRef.current.thoughts = new EditorJS({
             holder: thoughtsEditorRef.current,
             data: { blocks: parseBlocks(currentEntry.better_day_thoughts) },
-            tools: { header: HeaderBlock, paragraph: ParagraphBlock, list: ListBlock },
+            tools: editorTools,
           });
         }
 
@@ -119,8 +147,8 @@ export default function EditEntryPage() {
             editorInstanceRef.current.categories[cat.id] = new EditorJS({
               holder: holderElement,
               data: { blocks: initialCategoryBlocks[cat.id] || [] },
-              placeholder: `Record notes, activities, or reflections for ${cat.name}...`,
-              tools: { header: HeaderBlock, paragraph: ParagraphBlock, list: ListBlock, marker: MarkerBlock },
+              placeholder: `Record notes, tables, or reflections for ${cat.name}...`,
+              tools: editorTools,
             });
           }
         });
@@ -294,7 +322,7 @@ export default function EditEntryPage() {
               <div>
                 <h2 className="text-lg font-bold font-theme-heading">Category & Pillar Sections</h2>
                 <p className="text-xs opacity-75 mt-0.5" style={{ color: 'var(--text-muted)' }}>
-                  Refine rich notes, logs, or schedules for your custom pillars and update your performance ratings.
+                  Refine rich notes, tables, or schedules for your custom pillars and update your performance ratings.
                 </p>
               </div>
 

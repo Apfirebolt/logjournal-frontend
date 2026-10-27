@@ -18,7 +18,6 @@ export default function NewEntryClient() {
 
   const [title, setTitle] = useState('');
   
-  // Check for 'date' query param from calendar click, fallback to today's date
   const [journalDate, setJournalDate] = useState(() => {
     const paramDate = searchParams.get('date');
     if (paramDate) {
@@ -27,21 +26,20 @@ export default function NewEntryClient() {
     return new Date().toISOString().split('T')[0];
   });
 
-  const [categoryRatings, setCategoryRatings] = useState({}); // { [categoryId]: score }
+  const [categoryRatings, setCategoryRatings] = useState({});
   const [habits, setHabits] = useState([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Editor.js Refs for Highlights, Gratitude, Thoughts, and Dynamic Categories
   const highlightsEditorRef = useRef(null);
   const gratitudeEditorRef = useRef(null);
   const thoughtsEditorRef = useRef(null);
-  const categoryEditorsRefs = useRef({}); // { [categoryId]: DOM element ref }
+  const categoryEditorsRefs = useRef({});
 
   const editorInstanceRef = useRef({
     highlights: null,
     gratitude: null,
     thoughts: null,
-    categories: {}, // { [categoryId]: EditorJS instance }
+    categories: {},
   });
 
   useEffect(() => {
@@ -53,7 +51,7 @@ export default function NewEntryClient() {
     fetchCategories();
   }, [fetchCategories]);
 
-  // Initialize Global Editors and Dynamic Category Editors
+  // Initialize Editors with Medium-like Tools (No Images, Multi-level Headers, Tables, Code)
   useEffect(() => {
     let isMounted = true;
 
@@ -67,15 +65,43 @@ export default function NewEntryClient() {
       const DelimiterBlock = (await import('@editorjs/delimiter')).default;
       const QuoteBlock = (await import('@editorjs/quote')).default;
       const MarkerBlock = (await import('@editorjs/marker')).default;
+      const CodeBlock = (await import('@editorjs/code')).default;
+      const TableBlock = (await import('@editorjs/table')).default; // <--- Table Tool
 
       if (!isMounted) return;
+
+      const editorTools = {
+        header: {
+          class: HeaderBlock,
+          config: {
+            levels: [2, 3, 4], // Medium style H2, H3, H4
+            defaultLevel: 2,
+          }
+        },
+        paragraph: {
+          class: ParagraphBlock,
+          inlineToolbar: true,
+        },
+        list: {
+          class: ListBlock,
+          inlineToolbar: true,
+        },
+        quote: {
+          class: QuoteBlock,
+          inlineToolbar: true,
+        },
+        delimiter: DelimiterBlock,
+        marker: MarkerBlock,
+        code: CodeBlock,
+        table: TableBlock,
+      };
 
       // 1. Highlights Editor
       if (highlightsEditorRef.current && !editorInstanceRef.current.highlights) {
         editorInstanceRef.current.highlights = new EditorJS({
           holder: highlightsEditorRef.current,
-          placeholder: 'What were your main highlights today?',
-          tools: { header: HeaderBlock, paragraph: ParagraphBlock, list: ListBlock, delimiter: DelimiterBlock, quote: QuoteBlock, marker: MarkerBlock },
+          placeholder: 'Tell your story... What were your main highlights today?',
+          tools: editorTools,
         });
       }
 
@@ -84,7 +110,7 @@ export default function NewEntryClient() {
         editorInstanceRef.current.gratitude = new EditorJS({
           holder: gratitudeEditorRef.current,
           placeholder: 'What are you grateful for today?',
-          tools: { header: HeaderBlock, paragraph: ParagraphBlock, list: ListBlock, marker: MarkerBlock },
+          tools: editorTools,
         });
       }
 
@@ -92,8 +118,8 @@ export default function NewEntryClient() {
       if (thoughtsEditorRef.current && !editorInstanceRef.current.thoughts) {
         editorInstanceRef.current.thoughts = new EditorJS({
           holder: thoughtsEditorRef.current,
-          placeholder: 'How could today have been even better?',
-          tools: { header: HeaderBlock, paragraph: ParagraphBlock, list: ListBlock },
+          placeholder: 'Reflections... How could today have been even better?',
+          tools: editorTools,
         });
       }
 
@@ -104,7 +130,7 @@ export default function NewEntryClient() {
           editorInstanceRef.current.categories[cat.id] = new EditorJS({
             holder: holderElement,
             placeholder: `Record notes, activities, or reflections for ${cat.name}...`,
-            tools: { header: HeaderBlock, paragraph: ParagraphBlock, list: ListBlock, marker: MarkerBlock },
+            tools: editorTools,
           });
         }
       });
@@ -159,7 +185,6 @@ export default function NewEntryClient() {
         ? await editorInstanceRef.current.thoughts.save()
         : null;
 
-      // Gather category sections with both their rich text content blocks and rating scores
       const category_sections = [];
       for (const cat of categories) {
         const editorInstance = editorInstanceRef.current.categories[cat.id];
@@ -171,12 +196,11 @@ export default function NewEntryClient() {
 
         const rating = categoryRatings[cat.id] || null;
 
-        // Only include if user wrote content or gave a rating
         if (categoryBlocks.length > 0 || rating !== null) {
           category_sections.push({
             category_id: cat.id,
             rating_score: rating ? parseFloat(rating) : null,
-            content: categoryBlocks, // Stored as JSONB in DB
+            content: categoryBlocks,
           });
         }
       }
@@ -217,7 +241,6 @@ export default function NewEntryClient() {
 
         <main className="flex-grow max-w-4xl mx-auto px-6 py-12 w-full space-y-10">
           
-          {/* Header */}
           <div 
             className="flex items-center justify-between border-b pb-6" 
             style={{ borderColor: 'var(--border-color)' }}
@@ -226,11 +249,11 @@ export default function NewEntryClient() {
             <div>
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold mb-2" style={{ backgroundColor: 'var(--card-bg)', color: 'var(--accent)', border: '1px solid var(--border-color)' }}>
                 <PencilSquareIcon className="h-3.5 w-3.5" />
-                <span>Daily Log</span>
+                <span>Medium-Style Story Editor</span>
               </div>
               <h1 className="text-3xl font-bold font-theme-heading tracking-tight">New Journal Entry</h1>
               <p className="text-sm opacity-80 mt-1" style={{ color: 'var(--text-muted)' }}>
-                Capture your daily milestones, reflections, and category pillars for {journalDate}.
+                Draft rich stories, notes, and tables for {journalDate}.
               </p>
             </div>
 
@@ -247,7 +270,6 @@ export default function NewEntryClient() {
 
           <form onSubmit={handleSubmit} className="space-y-8">
             
-            {/* Journal Date Input */}
             <div className="space-y-2" data-aos="fade-up" data-aos-delay="100">
               <label className="block text-xs font-bold uppercase tracking-wider font-theme-heading opacity-80 flex items-center gap-1.5">
                 <CalendarIcon className="h-4 w-4" style={{ color: 'var(--accent)' }} />
@@ -267,16 +289,15 @@ export default function NewEntryClient() {
               />
             </div>
 
-            {/* Entry Title */}
             <div className="space-y-2" data-aos="fade-up" data-aos-delay="150">
               <label className="block text-xs font-bold uppercase tracking-wider font-theme-heading opacity-80">
-                Entry Title
+                Story Title
               </label>
               <input
                 type="text"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
-                placeholder="e.g., A Breakthrough in Architecture & Mindfulness"
+                placeholder="e.g., Reflections on System Architecture & Life"
                 className="w-full px-4 py-3.5 rounded-2xl border text-base focus:outline-none shadow-inner font-theme-heading font-semibold"
                 style={{
                   backgroundColor: 'var(--card-bg)',
@@ -287,7 +308,6 @@ export default function NewEntryClient() {
               />
             </div>
 
-            {/* Highlights Editor */}
             <div className="space-y-2" data-aos="fade-up" data-aos-delay="200">
               <label className="block text-xs font-bold uppercase tracking-wider font-theme-heading opacity-80">
                 Today's Highlights
@@ -302,7 +322,6 @@ export default function NewEntryClient() {
               />
             </div>
 
-            {/* Gratitude Editor */}
             <div className="space-y-2" data-aos="fade-up" data-aos-delay="250">
               <label className="block text-xs font-bold uppercase tracking-wider font-theme-heading opacity-80">
                 Gratitude
@@ -317,7 +336,6 @@ export default function NewEntryClient() {
               />
             </div>
 
-            {/* Better Day Thoughts Editor */}
             <div className="space-y-2" data-aos="fade-up" data-aos-delay="300">
               <label className="block text-xs font-bold uppercase tracking-wider font-theme-heading opacity-80">
                 Better Day Thoughts (Reflection)
@@ -332,17 +350,15 @@ export default function NewEntryClient() {
               />
             </div>
 
-            {/* Habit Checklist Component Integration */}
             <div data-aos="fade-up" data-aos-delay="350">
               <HabitChecklist habits={habits} onChange={setHabits} />
             </div>
 
-            {/* Dynamic Category Sections & Ratings */}
             <div className="space-y-6 pt-4 border-t" style={{ borderColor: 'var(--border-color)' }} data-aos="fade-up" data-aos-delay="400">
               <div>
                 <h2 className="text-lg font-bold font-theme-heading">Category & Pillar Sections</h2>
                 <p className="text-xs opacity-75 mt-0.5" style={{ color: 'var(--text-muted)' }}>
-                  Add rich notes, logs, or schedules for your custom pillars and rate your performance.
+                  Add rich notes, tables, or reflections for your custom pillars and rate your performance.
                 </p>
               </div>
 
@@ -353,7 +369,6 @@ export default function NewEntryClient() {
                     className="p-6 rounded-3xl border shadow-sm space-y-4"
                     style={{ backgroundColor: 'var(--card-bg)', borderColor: 'var(--border-color)' }}
                   >
-                    {/* Category Title & Rating Header */}
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b pb-3" style={{ borderColor: 'var(--border-color)' }}>
                       <div className="flex items-center gap-2">
                         <TagIcon className="h-5 w-5" style={{ color: 'var(--accent)' }} />
@@ -383,7 +398,6 @@ export default function NewEntryClient() {
                       </div>
                     </div>
 
-                    {/* Editor.js Block Container for this Category */}
                     <div 
                       ref={(el) => { categoryEditorsRefs.current[cat.id] = el; }}
                       className="p-6 rounded-2xl border shadow-inner min-h-[140px]"
