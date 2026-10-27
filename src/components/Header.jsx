@@ -15,6 +15,7 @@ import {
   SwatchIcon,
   CheckIcon,
   UserIcon,
+  Cog6ToothIcon,
   ArrowRightOnRectangleIcon,
   ArrowLeftOnRectangleIcon
 } from "@heroicons/react/24/outline";
@@ -161,9 +162,9 @@ const Header = () => {
                   <Link 
                     href="/categories" 
                     className={`px-4 py-2 rounded-xl font-medium text-sm flex items-center space-x-2 transition-all whitespace-nowrap ${
-                      pathname === '/journal/categories' ? 'shadow-sm' : 'opacity-80 hover:opacity-100 hover:bg-black/5 dark:hover:bg-white/5'
+                      pathname === '/categories' ? 'shadow-sm' : 'opacity-80 hover:opacity-100 hover:bg-black/5 dark:hover:bg-white/5'
                     }`}
-                    style={pathname === '/journal/categories' ? { backgroundColor: 'var(--accent)', color: 'var(--bg-primary)' } : { color: 'var(--text-main)' }}
+                    style={pathname === '/categories' ? { backgroundColor: 'var(--accent)', color: 'var(--bg-primary)' } : { color: 'var(--text-main)' }}
                   >
                     <TagIcon className="h-4 w-4" />
                     <span>Categories</span>
@@ -193,7 +194,7 @@ const Header = () => {
           <div className="relative" ref={themeDropdownRef}>
             <button
               onClick={() => setIsThemeDropdownOpen(!isThemeDropdownOpen)}
-              className="p-2.5 rounded-xl border flex items-center gap-2 transition-all shadow-sm hover:scale-105"
+              className="p-2.5 rounded-xl border flex items-center gap-2 transition-all shadow-sm hover:scale-105 cursor-pointer"
               style={{
                 backgroundColor: 'var(--card-bg)',
                 borderColor: 'var(--border-color)',
@@ -222,7 +223,7 @@ const Header = () => {
                   <button
                     key={t.id}
                     onClick={() => handleThemeChange(t.id)}
-                    className="w-full text-left px-4 py-2.5 text-sm font-medium flex items-center justify-between transition-colors hover:bg-black/5 dark:hover:bg-white/5"
+                    className="w-full text-left px-4 py-2.5 text-sm font-medium flex items-center justify-between transition-colors hover:bg-black/5 dark:hover:bg-white/5 cursor-pointer"
                     style={{ color: 'var(--text-main)' }}
                   >
                     <span>{t.name}</span>
@@ -240,18 +241,22 @@ const Header = () => {
             <div className="relative" ref={userDropdownRef}>
               <button
                 onClick={() => setIsUserDropdownOpen(!isUserDropdownOpen)}
-                className="hidden sm:flex items-center gap-2 px-3.5 py-2 rounded-xl border transition-all shadow-sm hover:scale-105"
+                className="hidden sm:flex items-center gap-2 px-3.5 py-2 rounded-xl border transition-all shadow-sm hover:scale-105 cursor-pointer"
                 style={{
                   backgroundColor: 'var(--card-bg)',
                   borderColor: 'var(--border-color)',
                   color: 'var(--text-main)'
                 }}
               >
-                <div className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold"
-                  style={{ backgroundColor: 'var(--accent)', color: 'var(--bg-primary)' }}
-                >
-                  {(user.username || user.email || 'U')[0].toUpperCase()}
-                </div>
+                {user.profile_image ? (
+                  <img src={user.profile_image} alt="Avatar" className="w-6 h-6 rounded-full object-cover border" style={{ borderColor: 'var(--accent)' }} />
+                ) : (
+                  <div className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold"
+                    style={{ backgroundColor: 'var(--accent)', color: 'var(--bg-primary)' }}
+                  >
+                    {(user.username || user.email || 'U')[0].toUpperCase()}
+                  </div>
+                )}
                 <span className="text-xs font-medium max-w-[120px] truncate">
                   {user.username || user.email}
                 </span>
@@ -269,9 +274,19 @@ const Header = () => {
                     <p className="text-[10px] uppercase font-bold tracking-widest opacity-50" style={{ color: 'var(--text-muted)' }}>Signed in as</p>
                     <p className="text-xs font-semibold truncate" style={{ color: 'var(--text-main)' }}>{user.username || user.email}</p>
                   </div>
+
+                  <Link
+                    href="/settings"
+                    className="w-full text-left px-4 py-2.5 text-sm font-medium flex items-center gap-2 transition-colors hover:bg-black/5 dark:hover:bg-white/5"
+                    style={{ color: 'var(--text-main)' }}
+                  >
+                    <Cog6ToothIcon className="h-4 w-4" style={{ color: 'var(--accent)' }} />
+                    <span>Profile Settings</span>
+                  </Link>
+
                   <button
                     onClick={handleLogout}
-                    className="w-full text-left px-4 py-2.5 text-sm font-medium flex items-center gap-2 text-rose-500 hover:bg-rose-500/10 transition-colors mt-1"
+                    className="w-full text-left px-4 py-2.5 text-sm font-medium flex items-center gap-2 text-rose-500 hover:bg-rose-500/10 transition-colors mt-1 cursor-pointer"
                   >
                     <ArrowRightOnRectangleIcon className="h-4 w-4" />
                     <span>Sign Out</span>
@@ -308,7 +323,7 @@ const Header = () => {
           {/* Mobile Hamburger Button */}
           <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="md:hidden p-2 rounded-xl transition-colors"
+            className="md:hidden p-2 rounded-xl transition-colors cursor-pointer"
             style={{ color: 'var(--text-main)' }}
             aria-label="Toggle mobile menu"
           >
@@ -331,11 +346,15 @@ const Header = () => {
         >
           {isAuthenticated && user && (
             <div className="px-4 py-3 rounded-xl mb-2 flex items-center gap-3 border" style={{ backgroundColor: 'var(--bg-primary)', borderColor: 'var(--border-color)' }}>
-              <div className="w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold"
-                style={{ backgroundColor: 'var(--accent)', color: 'var(--bg-primary)' }}
-              >
-                {(user.username || user.email || 'U')[0].toUpperCase()}
-              </div>
+              {user.profile_image ? (
+                <img src={user.profile_image} alt="Avatar" className="w-8 h-8 rounded-full object-cover border" style={{ borderColor: 'var(--accent)' }} />
+              ) : (
+                <div className="w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold"
+                  style={{ backgroundColor: 'var(--accent)', color: 'var(--bg-primary)' }}
+                >
+                  {(user.username || user.email || 'U')[0].toUpperCase()}
+                </div>
+              )}
               <div className="overflow-hidden">
                 <p className="text-[10px] uppercase font-bold tracking-widest opacity-50" style={{ color: 'var(--text-muted)' }}>Signed in as</p>
                 <p className="text-xs font-semibold truncate" style={{ color: 'var(--text-main)' }}>{user.username || user.email}</p>
@@ -390,9 +409,18 @@ const Header = () => {
                 <span>Analytics</span>
               </Link>
 
+              <Link
+                href="/settings"
+                className="flex items-center gap-3 px-4 py-3 rounded-xl font-medium text-sm transition-colors"
+                style={pathname === '/settings' ? { backgroundColor: 'var(--accent)', color: 'var(--bg-primary)' } : { color: 'var(--text-main)' }}
+              >
+                <Cog6ToothIcon className="h-5 w-5" />
+                <span>Profile Settings</span>
+              </Link>
+
               <button
                 onClick={handleLogout}
-                className="w-full flex items-center gap-3 px-4 py-3 rounded-xl font-medium text-sm text-rose-500 hover:bg-rose-500/10 transition-colors pt-2"
+                className="w-full flex items-center gap-3 px-4 py-3 rounded-xl font-medium text-sm text-rose-500 hover:bg-rose-500/10 transition-colors pt-2 cursor-pointer"
               >
                 <ArrowRightOnRectangleIcon className="h-5 w-5" />
                 <span>Sign Out</span>
