@@ -8,7 +8,7 @@ const baseURL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api';
 
 const httpClient = axios.create({
   baseURL,
-  timeout: 10000, // 10-second timeout so requests don't hang indefinitely if FastAPI is down
+  timeout: 10000, //
   headers: {
     'Content-Type': 'application/json',
   },
@@ -21,7 +21,6 @@ httpClient.interceptors.response.use(
     return response;
   },
   (error) => {
-    // Handle backend down or server error states globally
     if (!error.response) {
       console.error('[Network Error] Unable to connect to the FastAPI backend.');
     } else {

@@ -55,7 +55,6 @@ export const useAuthStore = create((set, get) => ({
   register: async (userData) => {
     set({ loading: true, error: null });
     try {
-      // Register user
       await httpClient.post('/auth/register', userData);
 
       const loginRes = await httpClient.post('/auth/login', {
@@ -91,6 +90,65 @@ export const useAuthStore = create((set, get) => ({
     } catch (err) {
       console.error("Failed to fetch profile:", err);
       set({ error: "Failed to load user profile.", loading: false });
+    }
+  },
+
+  // Update user profile details (username, first_name, last_name)
+  updateProfile: async (profileData) => {
+    set({ loading: true, error: null });
+    try {
+      const res = await httpClient.put('/auth/profile', profileData, getAuthHeaders());
+      const updatedUser = res.data;
+
+      Cookie.set('user', JSON.stringify(updatedUser), { expires: 7 });
+      set({ user: updatedUser, loading: false });
+      return { success: true, user: updatedUser };
+    } catch (err) {
+      const detail = err.response?.data?.detail;
+      const errorMsg = typeof detail === 'string' ? detail : (err.message || "Failed to update profile.");
+      set({ error: errorMsg, loading: false });
+      return { success: false, error: errorMsg };
+    }
+  },
+
+  // Change password action
+  changePassword: async (passwordData) => {
+    set({ loading: true, error: null });
+    try {
+      await httpClient.put('/auth/change-password', passwordData, getAuthHeaders());
+      set({ loading: false });
+      return { success: true };
+    } catch (err) {
+      const detail = err.response?.data?.detail;
+      const errorMsg = typeof detail === 'string' ? detail : (err.message || "Failed to change password.");
+      set({ error: errorMsg, loading: false });
+      return { success: false, error: errorMsg };
+    }
+  },
+
+  // Upload profile avatar image
+  uploadAvatar: async (file) => {
+    set({ loading: true, error: null });
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+
+      const res = await httpClient.post('/auth/upload-avatar', formData, {
+        headers: {
+          ...getAuthHeaders().headers,
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+
+      const updatedUser = res.data;
+      Cookie.set('user', JSON.stringify(updatedUser), { expires: 7 });
+      set({ user: updatedUser, loading: false });
+      return { success: true, user: updatedUser };
+    } catch (err) {
+      const detail = err.response?.data?.detail;
+      const errorMsg = typeof detail === 'string' ? detail : (err.message || "Failed to upload profile image.");
+      set({ error: errorMsg, loading: false });
+      return { success: false, error: errorMsg };
     }
   },
 
