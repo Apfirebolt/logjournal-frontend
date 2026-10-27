@@ -4,6 +4,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
+import HabitChecklist from '@/components/HabitCheckList';
 import { useJournalStore } from '@/store/useJournalStore';
 import { PencilSquareIcon, CheckIcon, StarIcon, ArrowLeftIcon } from '@heroicons/react/24/outline';
 import { toast } from 'react-toastify';
@@ -17,6 +18,7 @@ export default function EditEntryPage() {
 
   const [title, setTitle] = useState('');
   const [categoryRatings, setCategoryRatings] = useState({});
+  const [habits, setHabits] = useState([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const highlightsEditorRef = useRef(null);
@@ -47,6 +49,11 @@ export default function EditEntryPage() {
         initialRatings[sec.category_id] = sec.rating_score;
       });
       setCategoryRatings(initialRatings);
+
+      // Map existing habits
+      if (currentEntry.habits) {
+        setHabits(currentEntry.habits);
+      }
 
       // Initialize Editor.js with existing blocks if available
       async function initEditors() {
@@ -128,6 +135,7 @@ export default function EditEntryPage() {
         gratitude: gratitudeData ? JSON.stringify(gratitudeData.blocks) : '',
         better_day_thoughts: thoughtsData ? JSON.stringify(thoughtsData.blocks) : '',
         category_sections,
+        habits, // Included habits array in payload
       };
 
       const result = await updateEntry(entryId, payload);
@@ -167,7 +175,7 @@ export default function EditEntryPage() {
           <div className="flex items-center gap-4">
             <button 
               onClick={() => router.back()} 
-              className="p-2.5 rounded-xl border transition-all hover:scale-105" 
+              className="p-2.5 rounded-xl border transition-all hover:scale-105 cursor-pointer" 
               style={{ backgroundColor: 'var(--card-bg)', borderColor: 'var(--border-color)' }}
             >
               <ArrowLeftIcon className="h-4 w-4" />
@@ -181,7 +189,7 @@ export default function EditEntryPage() {
           <button
             onClick={handleUpdate}
             disabled={isSubmitting}
-            className="px-6 py-3 rounded-2xl text-sm font-semibold flex items-center gap-2 shadow-lg transition-all hover:scale-105 disabled:opacity-50"
+            className="px-6 py-3 rounded-2xl text-sm font-semibold flex items-center gap-2 shadow-lg transition-all hover:scale-105 disabled:opacity-50 cursor-pointer"
             style={{ backgroundColor: 'var(--accent)', color: 'var(--bg-primary)' }}
           >
             <CheckIcon className="h-5 w-5" />
@@ -217,6 +225,9 @@ export default function EditEntryPage() {
             <div ref={thoughtsEditorRef} className="p-6 rounded-2xl border shadow-inner min-h-[140px]" style={{ backgroundColor: 'var(--card-bg)', borderColor: 'var(--border-color)' }} />
           </div>
 
+          {/* Habit Checklist Component Integration */}
+          <HabitChecklist habits={habits} onChange={setHabits} />
+
           <div className="space-y-4 pt-4 border-t" style={{ borderColor: 'var(--border-color)' }}>
             <h2 className="text-lg font-bold font-theme-heading">Category & Pillar Ratings</h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -229,7 +240,7 @@ export default function EditEntryPage() {
                         type="button"
                         key={star}
                         onClick={() => handleRatingChange(cat.id, star)}
-                        className="p-1 transition-transform hover:scale-110 focus:outline-none"
+                        className="p-1 transition-transform hover:scale-110 focus:outline-none cursor-pointer"
                       >
                         <StarIcon className={`h-5 w-5 ${(categoryRatings[cat.id] || 0) >= star ? 'text-amber-400 fill-amber-400' : 'opacity-30'}`} />
                       </button>

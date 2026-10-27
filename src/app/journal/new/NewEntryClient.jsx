@@ -1,10 +1,11 @@
 'use client';
 
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import AuthGuard from '@/components/AuthGuard';
+import HabitChecklist from '@/components/HabitCheckList';
 import { useJournalStore } from '@/store/useJournalStore';
 import { PencilSquareIcon, CheckIcon, StarIcon, CalendarIcon } from '@heroicons/react/24/outline';
 import { toast } from 'react-toastify';
@@ -17,6 +18,7 @@ export default function NewEntryClient() {
   const [title, setTitle] = useState('');
   const [journalDate, setJournalDate] = useState(new Date().toISOString().split('T')[0]);
   const [categoryRatings, setCategoryRatings] = useState({});
+  const [habits, setHabits] = useState([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Editor.js Refs for Highlights, Gratitude, and Thoughts
@@ -151,6 +153,7 @@ export default function NewEntryClient() {
         gratitude: gratitudeData ? JSON.stringify(gratitudeData.blocks) : '',
         better_day_thoughts: thoughtsData ? JSON.stringify(thoughtsData.blocks) : '',
         category_sections,
+        habits, // Included habits array
       };
 
       const result = await createEntry(payload);
@@ -209,7 +212,7 @@ export default function NewEntryClient() {
 
           <form onSubmit={handleSubmit} className="space-y-8">
             
-            {/* Journal Date Input (Added at the top) */}
+            {/* Journal Date Input */}
             <div className="space-y-2" data-aos="fade-up" data-aos-delay="100">
               <label className="block text-xs font-bold uppercase tracking-wider font-theme-heading opacity-80 flex items-center gap-1.5">
                 <CalendarIcon className="h-4 w-4" style={{ color: 'var(--accent)' }} />
@@ -294,8 +297,13 @@ export default function NewEntryClient() {
               />
             </div>
 
+            {/* Habit Checklist Component Integration */}
+            <div data-aos="fade-up" data-aos-delay="350">
+              <HabitChecklist habits={habits} onChange={setHabits} />
+            </div>
+
             {/* Category Ratings Section */}
-            <div className="space-y-4 pt-4 border-t" style={{ borderColor: 'var(--border-color)' }} data-aos="fade-up" data-aos-delay="350">
+            <div className="space-y-4 pt-4 border-t" style={{ borderColor: 'var(--border-color)' }} data-aos="fade-up" data-aos-delay="400">
               <h2 className="text-lg font-bold font-theme-heading">Category & Pillar Ratings (1 - 5)</h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {categories.map((cat) => (

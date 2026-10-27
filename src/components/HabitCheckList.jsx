@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { CheckIcon, PlusIcon, TrashIcon, CheckCircleIcon } from '@heroicons/react/24/outline';
+import { PlusIcon, TrashIcon, CheckCircleIcon } from '@heroicons/react/24/outline';
 
 export default function HabitChecklist({ habits = [], onChange }) {
   const [newHabitName, setNewHabitName] = useState('');
@@ -13,6 +13,13 @@ export default function HabitChecklist({ habits = [], onChange }) {
     const updated = [...habits, { task_name: newHabitName.trim(), is_completed: false }];
     onChange(updated);
     setNewHabitName('');
+  };
+
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault(); // Prevent parent form from submitting
+      handleAddHabit(e);
+    }
   };
 
   const toggleHabit = (index) => {
@@ -40,25 +47,27 @@ export default function HabitChecklist({ habits = [], onChange }) {
         </span>
       </div>
 
-      {/* Add Habit Input Form */}
-      <form onSubmit={handleAddHabit} className="flex gap-2">
+      {/* Replaced <form> with a <div> container to prevent nesting violations */}
+      <div className="flex gap-2">
         <input
           type="text"
           value={newHabitName}
           onChange={(e) => setNewHabitName(e.target.value)}
+          onKeyDown={handleKeyDown}
           placeholder="Add a habit (e.g., Drank 3L water, Meditated)..."
           className="w-full px-4 py-2.5 rounded-xl border text-xs focus:outline-none shadow-inner"
           style={{ backgroundColor: 'var(--bg-primary)', borderColor: 'var(--border-color)', color: 'var(--text-main)' }}
         />
         <button
-          type="submit"
-          className="px-4 py-2.5 rounded-xl text-xs font-semibold flex items-center gap-1 transition-all shadow-md shrink-0 hover:opacity-90"
+          type="button"
+          onClick={handleAddHabit}
+          className="px-4 py-2.5 rounded-xl text-xs font-semibold flex items-center gap-1 transition-all shadow-md shrink-0 hover:opacity-90 cursor-pointer"
           style={{ backgroundColor: 'var(--accent)', color: 'var(--bg-primary)' }}
         >
           <PlusIcon className="h-4 w-4" />
           <span>Add</span>
         </button>
-      </form>
+      </div>
 
       {/* Habits List */}
       <div className="space-y-2">
@@ -86,7 +95,7 @@ export default function HabitChecklist({ habits = [], onChange }) {
               <button
                 type="button"
                 onClick={() => removeHabit(idx)}
-                className="p-1.5 rounded-lg text-rose-500 hover:bg-rose-500/10 transition-colors"
+                className="p-1.5 rounded-lg text-rose-500 hover:bg-rose-500/10 transition-colors cursor-pointer"
               >
                 <TrashIcon className="h-4 w-4" />
               </button>
