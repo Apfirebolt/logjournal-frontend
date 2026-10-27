@@ -1,7 +1,7 @@
 import NewEntryClient from './NewEntryClient';
 
 export const metadata = {
-  title: 'New Journal Entry | Log Journal',
+  title: 'New Journal Entry | Softgenie Journal',
   description: 'Create a new daily reflection and track your category ratings.',
 };
 

@@ -2,7 +2,7 @@ import React from 'react';
 import CategoriesClient from './CategoryClient';
 
 export const metadata = {
-  title: 'Journal Categories | Log Journal',
+  title: 'Journal Categories | Softgenie Journal',
   description: 'Manage your standard reflection pillars and custom tags.',
 };
 

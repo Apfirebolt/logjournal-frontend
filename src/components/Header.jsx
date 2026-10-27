@@ -111,7 +111,7 @@ const Header = () => {
             <span className="text-xl sm:text-2xl font-bold font-theme-heading tracking-tight"
               style={{ color: 'var(--text-main)' }}
             >
-              Log<span style={{ color: 'var(--accent)' }}>Journal</span>
+              Softgenie <span style={{ color: 'var(--accent)' }}>Journal</span>
             </span>
           </Link>
         </div>
