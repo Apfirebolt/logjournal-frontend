@@ -9,7 +9,6 @@ import {
   CalendarDaysIcon, 
   XMarkIcon,
   BookOpenIcon,
-  StarIcon,
   ArrowRightIcon
 } from '@heroicons/react/24/outline';
 import { Dialog, DialogPanel, DialogTitle, Transition, TransitionChild } from '@headlessui/react';
@@ -61,14 +60,12 @@ export default function JournalCalendar({ entries = [], onSelectDate }) {
   // Handle cell click
   const handleCellClick = (dateKey, dayEntries) => {
     if (dayEntries.length > 0) {
-      // If entries exist, open inspection modal
       setSelectedDayData({ dateStr: dateKey, entries: dayEntries });
       setIsDayModalOpen(true);
       if (onSelectDate) {
         onSelectDate(dateKey, dayEntries);
       }
     } else {
-      // If no entries exist, navigate to new entry page with pre-selected date
       router.push(`/journal/new?date=${dateKey}`);
     }
   };
@@ -81,7 +78,7 @@ export default function JournalCalendar({ entries = [], onSelectDate }) {
     calendarCells.push(
       <div 
         key={`empty-${i}`} 
-        className="h-32 rounded-2xl border border-dashed opacity-20 hidden sm:block" 
+        className="h-20 sm:h-32 rounded-2xl border border-dashed opacity-20 hidden sm:block" 
         style={{ borderColor: 'var(--border-color)', backgroundColor: 'var(--bg-primary)' }}
       />
     );
@@ -104,7 +101,7 @@ export default function JournalCalendar({ entries = [], onSelectDate }) {
       <div
         key={dateKey}
         onClick={() => handleCellClick(dateKey, dayEntries)}
-        className={`h-32 p-3 rounded-2xl border transition-all duration-300 flex flex-col justify-between group relative overflow-hidden cursor-pointer ${
+        className={`h-20 sm:h-32 p-1.5 sm:p-3 rounded-2xl border transition-all duration-300 flex flex-col justify-between group relative overflow-hidden cursor-pointer ${
           isToday 
             ? 'shadow-md ring-2 ring-[var(--accent)]' 
             : hasActivity 
@@ -119,7 +116,7 @@ export default function JournalCalendar({ entries = [], onSelectDate }) {
       >
         {/* Top: Date Number & Status Pill */}
         <div className="flex items-center justify-between">
-          <span className={`text-xs font-bold font-mono w-7 h-7 flex items-center justify-center rounded-xl transition-all ${
+          <span className={`text-[10px] sm:text-xs font-bold font-mono w-6 h-6 sm:w-7 sm:h-7 flex items-center justify-center rounded-xl transition-all ${
             isToday 
               ? 'text-white font-extrabold shadow-sm' 
               : hasActivity 
@@ -138,21 +135,21 @@ export default function JournalCalendar({ entries = [], onSelectDate }) {
           </span>
           
           {hasActivity ? (
-            <span className="text-[10px] font-bold font-mono px-2 py-0.5 rounded-full border"
+            <span className="text-[9px] sm:text-[10px] font-bold font-mono px-1.5 sm:px-2 py-0.5 rounded-full border"
               style={{ backgroundColor: 'var(--bg-primary)', color: 'var(--accent)', borderColor: 'var(--border-color)' }}
             >
-              {dayEntries.length} {dayEntries.length === 1 ? 'Entry' : 'Entries'}
+              {dayEntries.length} {dayEntries.length === 1 ? '' : ''}
             </span>
           ) : (
-            <span className="text-[9px] uppercase tracking-wider opacity-40 font-mono group-hover:opacity-80 transition-opacity" style={{ color: 'var(--text-muted)' }}>
+            <span className="text-[8px] sm:text-[9px] uppercase tracking-wider opacity-40 font-mono group-hover:opacity-80 transition-opacity hidden sm:inline" style={{ color: 'var(--text-muted)' }}>
               + Write
             </span>
           )}
         </div>
 
-        {/* Middle: Miniature Entry Titles (up to 2 items) */}
+        {/* Middle: Miniature Entry Titles (Hidden on mobile to prevent clutter, visible on sm+) */}
         {hasActivity ? (
-          <div className="space-y-1 my-auto overflow-hidden">
+          <div className="space-y-1 my-auto overflow-hidden hidden sm:block">
             {dayEntries.slice(0, 2).map((entry, idx) => (
               <div 
                 key={entry.id || idx} 
@@ -172,13 +169,20 @@ export default function JournalCalendar({ entries = [], onSelectDate }) {
             )}
           </div>
         ) : (
-          <div className="my-auto text-center text-[10px] italic font-theme-body select-none opacity-40 group-hover:opacity-80 transition-opacity" style={{ color: 'var(--text-muted)' }}>
+          <div className="my-auto text-center text-[9px] italic font-theme-body select-none opacity-40 group-hover:opacity-80 transition-opacity hidden sm:block" style={{ color: 'var(--text-muted)' }}>
             Click to add journal
           </div>
         )}
 
-        {/* Bottom Status Indicator */}
-        <div className="pt-1.5 border-t flex items-center justify-between" style={{ borderColor: 'var(--border-color)' }}>
+        {/* Mobile Indicator Dot when entries exist */}
+        {hasActivity && (
+          <div className="sm:hidden flex justify-center my-auto">
+            <span className="w-2 h-2 rounded-full animate-pulse" style={{ backgroundColor: 'var(--accent)' }} />
+          </div>
+        )}
+
+        {/* Bottom Status Indicator (Hidden on mobile for clean spacing) */}
+        <div className="pt-1.5 border-t sm:flex items-center justify-between hidden" style={{ borderColor: 'var(--border-color)' }}>
           <span className="text-[9px] uppercase font-bold font-theme-heading tracking-wider opacity-60" style={{ color: 'var(--text-muted)' }}>
             Status
           </span>
@@ -192,7 +196,7 @@ export default function JournalCalendar({ entries = [], onSelectDate }) {
 
   return (
     <div 
-      className="space-y-6 w-full border rounded-3xl p-6 sm:p-8 shadow-sm font-theme-body backdrop-blur-xl transition-colors duration-300"
+      className="space-y-6 w-full border rounded-3xl p-4 sm:p-8 shadow-sm font-theme-body backdrop-blur-xl transition-colors duration-300"
       style={{ backgroundColor: 'var(--card-bg)', borderColor: 'var(--border-color)', color: 'var(--text-main)' }}
     >
       
@@ -244,16 +248,16 @@ export default function JournalCalendar({ entries = [], onSelectDate }) {
       </div>
 
       {/* Weekday Labels */}
-      <div className="grid grid-cols-7 gap-2 text-center py-2.5 rounded-2xl border" style={{ backgroundColor: 'var(--bg-primary)', borderColor: 'var(--border-color)' }}>
+      <div className="grid grid-cols-7 gap-1.5 sm:gap-2 text-center py-2.5 rounded-2xl border" style={{ backgroundColor: 'var(--bg-primary)', borderColor: 'var(--border-color)' }}>
         {DAY_NAMES.map((day) => (
-          <span key={day} className="text-xs font-bold uppercase tracking-widest opacity-60 font-theme-heading" style={{ color: 'var(--text-main)' }}>
+          <span key={day} className="text-[10px] sm:text-xs font-bold uppercase tracking-widest opacity-60 font-theme-heading" style={{ color: 'var(--text-main)' }}>
             {day}
           </span>
         ))}
       </div>
 
       {/* Calendar Grid */}
-      <div className="grid grid-cols-7 gap-2.5 sm:gap-3.5">
+      <div className="grid grid-cols-7 gap-1.5 sm:gap-3.5">
         {calendarCells}
       </div>
 
@@ -284,7 +288,7 @@ export default function JournalCalendar({ entries = [], onSelectDate }) {
                 leaveTo="opacity-0 scale-95"
               >
                 <DialogPanel 
-                  className="w-full max-w-lg transform overflow-hidden rounded-[2rem] border p-8 text-left align-middle shadow-2xl transition-all space-y-6"
+                  className="w-full max-w-lg transform overflow-hidden rounded-[2rem] border p-6 sm:p-8 text-left align-middle shadow-2xl transition-all space-y-6"
                   style={{ backgroundColor: 'var(--card-bg)', borderColor: 'var(--border-color)', color: 'var(--text-main)' }}
                 >
                   
@@ -298,7 +302,7 @@ export default function JournalCalendar({ entries = [], onSelectDate }) {
                         <CalendarDaysIcon className="h-5 w-5" />
                       </div>
                       <div>
-                        <DialogTitle as="h3" className="text-base font-extrabold font-theme-heading">
+                        <DialogTitle as="h3" className="text-sm sm:text-base font-extrabold font-theme-heading">
                           Journal Entries for {selectedDayData?.dateStr}
                         </DialogTitle>
                         <p className="text-xs font-mono font-bold opacity-70" style={{ color: 'var(--text-muted)' }}>
@@ -347,11 +351,11 @@ export default function JournalCalendar({ entries = [], onSelectDate }) {
                   </div>
 
                   {/* Footer */}
-                  <div className="pt-2 border-t flex items-center justify-between" style={{ borderColor: 'var(--border-color)' }}>
+                  <div className="pt-2 border-t flex flex-col sm:flex-row items-center justify-between gap-3" style={{ borderColor: 'var(--border-color)' }}>
                     <Link
                       href={`/journal/new?date=${selectedDayData?.dateStr}`}
                       onClick={() => setIsDayModalOpen(false)}
-                      className="px-4 py-2.5 rounded-xl text-xs font-bold border transition-all shadow-sm hover:opacity-90 flex items-center gap-1.5"
+                      className="w-full sm:w-auto px-4 py-2.5 rounded-xl text-xs font-bold border transition-all shadow-sm hover:opacity-90 flex items-center justify-center gap-1.5"
                       style={{ backgroundColor: 'var(--bg-primary)', borderColor: 'var(--border-color)', color: 'var(--accent)' }}
                     >
                       <span>+ Add Another Entry for this Date</span>
@@ -359,7 +363,7 @@ export default function JournalCalendar({ entries = [], onSelectDate }) {
 
                     <button
                       onClick={() => setIsDayModalOpen(false)}
-                      className="px-5 py-2.5 rounded-xl text-xs font-bold transition-all shadow-md cursor-pointer hover:opacity-90"
+                      className="w-full sm:w-auto px-5 py-2.5 rounded-xl text-xs font-bold transition-all shadow-md cursor-pointer hover:opacity-90"
                       style={{ backgroundColor: 'var(--accent)', color: 'var(--bg-primary)' }}
                     >
                       Close

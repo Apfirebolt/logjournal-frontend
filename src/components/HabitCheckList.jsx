@@ -45,9 +45,9 @@ export default function HabitChecklist({ habits = [], onChange }) {
       <div className="flex items-center justify-between border-b pb-3" style={{ borderColor: 'var(--border-color)' }}>
         <div className="flex items-center gap-2">
           <CheckCircleIcon className="h-5 w-5" style={{ color: 'var(--accent)' }} />
-          <h3 className="text-sm font-bold font-theme-heading uppercase tracking-wider">Daily Habits & Tasks</h3>
+          <h3 className="text-lg font-bold font-theme-heading uppercase tracking-wider">Daily Habits & Tasks</h3>
         </div>
-        <span className="text-xs font-mono opacity-60">
+        <span className="opacity-60">
           {completedCount} / {safeHabits.length} Completed
         </span>
       </div>
@@ -59,13 +59,13 @@ export default function HabitChecklist({ habits = [], onChange }) {
           onChange={(e) => setNewHabitName(e.target.value)}
           onKeyDown={handleKeyDown}
           placeholder="Add a habit (e.g., Drank 3L water, Meditated)..."
-          className="w-full px-4 py-2.5 rounded-xl border text-xs focus:outline-none shadow-inner"
+          className="w-full px-4 py-2.5 rounded-xl border focus:outline-none shadow-inner"
           style={{ backgroundColor: 'var(--bg-primary)', borderColor: 'var(--border-color)', color: 'var(--text-main)' }}
         />
         <button
           type="button"
           onClick={handleAddHabit}
-          className="px-4 py-2.5 rounded-xl text-xs font-semibold flex items-center gap-1 transition-all shadow-md shrink-0 hover:opacity-90 cursor-pointer"
+          className="px-4 py-2.5 rounded-xl font-semibold flex items-center gap-1 transition-all shadow-md shrink-0 hover:opacity-90 cursor-pointer"
           style={{ backgroundColor: 'var(--accent)', color: 'var(--bg-primary)' }}
         >
           <PlusIcon className="h-4 w-4" />
@@ -76,7 +76,7 @@ export default function HabitChecklist({ habits = [], onChange }) {
       {/* Habits List */}
       <div className="space-y-2">
         {safeHabits.length === 0 ? (
-          <p className="text-xs opacity-50 italic py-2">No habits added for today yet.</p>
+          <p className="opacity-50 italic py-2">No habits added for today yet.</p>
         ) : (
           safeHabits.map((habit, idx) => (
             <div 
@@ -91,7 +91,7 @@ export default function HabitChecklist({ habits = [], onChange }) {
                   onChange={() => toggleHabit(idx)}
                   className="w-4 h-4 rounded border accent-[var(--accent)] cursor-pointer"
                 />
-                <span className={`text-xs font-medium ${habit.is_completed ? 'line-through opacity-50' : ''}`}>
+                <span className={`font-medium ${habit.is_completed ? 'line-through opacity-50' : ''}`}>
                   {habit.task_name}
                 </span>
               </label>

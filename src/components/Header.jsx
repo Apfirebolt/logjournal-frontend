@@ -22,10 +22,10 @@ import {
 } from "@heroicons/react/24/outline";
 
 const themes = [
-  { id: 'light', name: 'Light Parchment' },
-  { id: 'dark', name: 'Midnight Dark' },
-  { id: 'neon', name: 'Neon Synthwave' },
-  { id: 'argon', name: 'Argon Emerald' },
+  { id: 'light', name: 'Light' },
+  { id: 'dark', name: 'Midnight' },
+  { id: 'neon', name: 'Neon' },
+  { id: 'argon', name: 'Argon' },
 ];
 
 const Header = () => {
@@ -108,7 +108,7 @@ const Header = () => {
             >
               <BookOpenIcon className="h-5 w-5" />
             </div>
-            <span className="text-xl sm:text-2xl font-bold font-theme-heading tracking-tight"
+            <span className="text-3xl sm:text-3xl font-bold font-theme-heading tracking-tight"
               style={{ color: 'var(--text-main)' }}
             >
               Softgenie <span style={{ color: 'var(--accent)' }}>Journal</span>
@@ -122,7 +122,7 @@ const Header = () => {
             <li>
               <Link 
                 href="/" 
-                className={`px-4 py-2 rounded-xl font-medium text-sm flex items-center space-x-2 transition-all whitespace-nowrap ${
+                className={`px-4 py-2 rounded-xl font-medium flex items-center space-x-2 transition-all whitespace-nowrap ${
                   pathname === '/' ? 'shadow-sm' : 'opacity-80 hover:opacity-100 hover:bg-black/5 dark:hover:bg-white/5'
                 }`}
                 style={pathname === '/' ? { backgroundColor: 'var(--accent)', color: 'var(--bg-primary)' } : { color: 'var(--text-main)' }}
@@ -138,7 +138,7 @@ const Header = () => {
                 <li>
                   <Link 
                     href="/journal/new" 
-                    className={`px-4 py-2 rounded-xl font-medium text-sm flex items-center space-x-2 transition-all whitespace-nowrap ${
+                    className={`px-4 py-2 rounded-xl font-medium flex items-center space-x-2 transition-all whitespace-nowrap ${
                       pathname === '/journal/new' ? 'shadow-sm' : 'opacity-80 hover:opacity-100 hover:bg-black/5 dark:hover:bg-white/5'
                     }`}
                     style={pathname === '/journal/new' ? { backgroundColor: 'var(--accent)', color: 'var(--bg-primary)' } : { color: 'var(--text-main)' }}
@@ -150,7 +150,7 @@ const Header = () => {
                 <li>
                   <Link 
                     href="/journal/entries" 
-                    className={`px-4 py-2 rounded-xl font-medium text-sm flex items-center space-x-2 transition-all whitespace-nowrap ${
+                    className={`px-4 py-2 rounded-xl font-medium flex items-center space-x-2 transition-all whitespace-nowrap ${
                       pathname.startsWith('/journal/entries') ? 'shadow-sm' : 'opacity-80 hover:opacity-100 hover:bg-black/5 dark:hover:bg-white/5'
                     }`}
                     style={pathname.startsWith('/journal/entries') ? { backgroundColor: 'var(--accent)', color: 'var(--bg-primary)' } : { color: 'var(--text-main)' }}
@@ -162,7 +162,7 @@ const Header = () => {
                 <li>
                   <Link 
                     href="/categories" 
-                    className={`px-4 py-2 rounded-xl font-medium text-sm flex items-center space-x-2 transition-all whitespace-nowrap ${
+                    className={`px-4 py-2 rounded-xl font-medium flex items-center space-x-2 transition-all whitespace-nowrap ${
                       pathname === '/categories' ? 'shadow-sm' : 'opacity-80 hover:opacity-100 hover:bg-black/5 dark:hover:bg-white/5'
                     }`}
                     style={pathname === '/categories' ? { backgroundColor: 'var(--accent)', color: 'var(--bg-primary)' } : { color: 'var(--text-main)' }}
@@ -174,25 +174,13 @@ const Header = () => {
                 <li>
                   <Link 
                     href="/analytics" 
-                    className={`px-4 py-2 rounded-xl font-medium text-sm flex items-center space-x-2 transition-all whitespace-nowrap ${
+                    className={`px-4 py-2 rounded-xl font-medium flex items-center space-x-2 transition-all whitespace-nowrap ${
                       pathname === '/analytics' ? 'shadow-sm' : 'opacity-80 hover:opacity-100 hover:bg-black/5 dark:hover:bg-white/5'
                     }`}
                     style={pathname === '/analytics' ? { backgroundColor: 'var(--accent)', color: 'var(--bg-primary)' } : { color: 'var(--text-main)' }}
                   >
                     <ChartBarIcon className="h-4 w-4" />
                     <span>Analytics</span>
-                  </Link>
-                </li>
-                <li>
-                  <Link 
-                    href="/notifications" 
-                    className={`px-4 py-2 rounded-xl font-medium text-sm flex items-center space-x-2 transition-all whitespace-nowrap ${
-                      pathname === '/notifications' ? 'shadow-sm' : 'opacity-80 hover:opacity-100 hover:bg-black/5 dark:hover:bg-white/5'
-                    }`}
-                    style={pathname === '/notifications' ? { backgroundColor: 'var(--accent)', color: 'var(--bg-primary)' } : { color: 'var(--text-main)' }}
-                  >
-                    <BellIcon className="h-4 w-4" />
-                    <span>Notifications</span>
                   </Link>
                 </li>
               </>
@@ -216,7 +204,7 @@ const Header = () => {
               aria-label="Select theme"
             >
               <SwatchIcon className="h-4 w-4" style={{ color: 'var(--accent)' }} />
-              <span className="hidden sm:inline text-xs font-semibold uppercase tracking-wider">
+              <span className="hidden sm:inline font-semibold uppercase tracking-wider">
                 {currentTheme}
               </span>
             </button>
@@ -236,7 +224,7 @@ const Header = () => {
                   <button
                     key={t.id}
                     onClick={() => handleThemeChange(t.id)}
-                    className="w-full text-left px-4 py-2.5 text-sm font-medium flex items-center justify-between transition-colors hover:bg-black/5 dark:hover:bg-white/5 cursor-pointer"
+                    className="w-full text-sm text-left px-4 py-2.5 font-medium flex items-center justify-between transition-colors hover:bg-black/5 dark:hover:bg-white/5 cursor-pointer"
                     style={{ color: 'var(--text-main)' }}
                   >
                     <span>{t.name}</span>
@@ -264,13 +252,13 @@ const Header = () => {
                 {user.profile_image ? (
                   <img src={user.profile_image} alt="Avatar" className="w-6 h-6 rounded-full object-cover border" style={{ borderColor: 'var(--accent)' }} />
                 ) : (
-                  <div className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold"
+                  <div className="w-6 h-6 rounded-full flex items-center justify-center font-bold"
                     style={{ backgroundColor: 'var(--accent)', color: 'var(--bg-primary)' }}
                   >
                     {(user.username || user.email || 'U')[0].toUpperCase()}
                   </div>
                 )}
-                <span className="text-xs font-medium max-w-[120px] truncate">
+                <span className="font-medium max-w-[120px] truncate">
                   {user.username || user.email}
                 </span>
               </button>
@@ -285,21 +273,30 @@ const Header = () => {
                 >
                   <div className="px-4 py-2 border-b" style={{ borderColor: 'var(--border-color)' }}>
                     <p className="text-[10px] uppercase font-bold tracking-widest opacity-50" style={{ color: 'var(--text-muted)' }}>Signed in as</p>
-                    <p className="text-xs font-semibold truncate" style={{ color: 'var(--text-main)' }}>{user.username || user.email}</p>
+                    <p className="font-semibold truncate" style={{ color: 'var(--text-main)' }}>{user.username || user.email}</p>
                   </div>
 
                   <Link
                     href="/settings"
-                    className="w-full text-left px-4 py-2.5 text-sm font-medium flex items-center gap-2 transition-colors hover:bg-black/5 dark:hover:bg-white/5"
+                    className="w-full text-left px-4 py-2.5 font-medium flex items-center gap-2 transition-colors hover:bg-black/5 dark:hover:bg-white/5"
                     style={{ color: 'var(--text-main)' }}
                   >
                     <Cog6ToothIcon className="h-4 w-4" style={{ color: 'var(--accent)' }} />
                     <span>Profile Settings</span>
                   </Link>
 
+                  <Link
+                    href="/notifications"
+                    className="w-full text-left px-4 py-2.5 font-medium flex items-center gap-2 transition-colors hover:bg-black/5 dark:hover:bg-white/5"
+                    style={{ color: 'var(--text-main)' }}
+                  >
+                    <BellIcon className="h-4 w-4" style={{ color: 'var(--accent)' }} />
+                    <span>Notifications</span>
+                  </Link>
+
                   <button
                     onClick={handleLogout}
-                    className="w-full text-left px-4 py-2.5 text-sm font-medium flex items-center gap-2 text-rose-500 hover:bg-rose-500/10 transition-colors mt-1 cursor-pointer"
+                    className="w-full text-left px-4 py-2.5 font-medium flex items-center gap-2 text-rose-500 hover:bg-rose-500/10 transition-colors mt-1 cursor-pointer"
                   >
                     <ArrowRightOnRectangleIcon className="h-4 w-4" />
                     <span>Sign Out</span>
@@ -311,7 +308,7 @@ const Header = () => {
             <div className="hidden sm:flex items-center gap-2">
               <Link
                 href="/login"
-                className="px-4 py-2 text-xs font-semibold rounded-xl border transition-all hover:opacity-100 opacity-80"
+                className="px-4 py-2 font-semibold rounded-xl border transition-all hover:opacity-100 opacity-80"
                 style={{
                   backgroundColor: 'var(--card-bg)',
                   borderColor: 'var(--border-color)',
@@ -322,7 +319,7 @@ const Header = () => {
               </Link>
               <Link
                 href="/register"
-                className="px-4 py-2 text-xs font-semibold rounded-xl transition-all shadow-sm hover:opacity-90"
+                className="px-4 py-2 font-semibold rounded-xl transition-all shadow-sm hover:opacity-90"
                 style={{
                   backgroundColor: 'var(--accent)',
                   color: 'var(--bg-primary)',
@@ -362,7 +359,7 @@ const Header = () => {
               {user.profile_image ? (
                 <img src={user.profile_image} alt="Avatar" className="w-8 h-8 rounded-full object-cover border" style={{ borderColor: 'var(--accent)' }} />
               ) : (
-                <div className="w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold"
+                <div className="w-8 h-8 rounded-full flex items-center justify-center font-bold"
                   style={{ backgroundColor: 'var(--accent)', color: 'var(--bg-primary)' }}
                 >
                   {(user.username || user.email || 'U')[0].toUpperCase()}
@@ -370,14 +367,14 @@ const Header = () => {
               )}
               <div className="overflow-hidden">
                 <p className="text-[10px] uppercase font-bold tracking-widest opacity-50" style={{ color: 'var(--text-muted)' }}>Signed in as</p>
-                <p className="text-xs font-semibold truncate" style={{ color: 'var(--text-main)' }}>{user.username || user.email}</p>
+                <p className="font-semibold truncate" style={{ color: 'var(--text-main)' }}>{user.username || user.email}</p>
               </div>
             </div>
           )}
 
           <Link
             href="/"
-            className="flex items-center gap-3 px-4 py-3 rounded-xl font-medium text-sm transition-colors"
+            className="flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-colors"
             style={pathname === '/' ? { backgroundColor: 'var(--accent)', color: 'var(--bg-primary)' } : { color: 'var(--text-main)' }}
           >
             <HomeIcon className="h-5 w-5" />
@@ -388,7 +385,7 @@ const Header = () => {
             <>
               <Link
                 href="/journal/new"
-                className="flex items-center gap-3 px-4 py-3 rounded-xl font-medium text-sm transition-colors"
+                className="flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-colors"
                 style={pathname === '/journal/new' ? { backgroundColor: 'var(--accent)', color: 'var(--bg-primary)' } : { color: 'var(--text-main)' }}
               >
                 <PencilSquareIcon className="h-5 w-5" />
@@ -397,7 +394,7 @@ const Header = () => {
 
               <Link
                 href="/journal/entries"
-                className="flex items-center gap-3 px-4 py-3 rounded-xl font-medium text-sm transition-colors"
+                className="flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-colors"
                 style={pathname.startsWith('/journal/entries') ? { backgroundColor: 'var(--accent)', color: 'var(--bg-primary)' } : { color: 'var(--text-main)' }}
               >
                 <BookOpenIcon className="h-5 w-5" />
@@ -406,7 +403,7 @@ const Header = () => {
 
               <Link
                 href="/categories"
-                className="flex items-center gap-3 px-4 py-3 rounded-xl font-medium text-sm transition-colors"
+                className="flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-colors"
                 style={pathname === '/categories' ? { backgroundColor: 'var(--accent)', color: 'var(--bg-primary)' } : { color: 'var(--text-main)' }}
               >
                 <TagIcon className="h-5 w-5" />
@@ -415,7 +412,7 @@ const Header = () => {
 
               <Link
                 href="/analytics"
-                className="flex items-center gap-3 px-4 py-3 rounded-xl font-medium text-sm transition-colors"
+                className="flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-colors"
                 style={pathname === '/analytics' ? { backgroundColor: 'var(--accent)', color: 'var(--bg-primary)' } : { color: 'var(--text-main)' }}
               >
                 <ChartBarIcon className="h-5 w-5" />
@@ -423,26 +420,26 @@ const Header = () => {
               </Link>
 
               <Link
-                href="/notifications"
-                className="flex items-center gap-3 px-4 py-3 rounded-xl font-medium text-sm transition-colors"
-                style={pathname === '/notifications' ? { backgroundColor: 'var(--accent)', color: 'var(--bg-primary)' } : { color: 'var(--text-main)' }}
-              >
-                <BellIcon className="h-5 w-5" />
-                <span>Notifications</span>
-              </Link>
-
-              <Link
                 href="/settings"
-                className="flex items-center gap-3 px-4 py-3 rounded-xl font-medium text-sm transition-colors"
+                className="flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-colors"
                 style={pathname === '/settings' ? { backgroundColor: 'var(--accent)', color: 'var(--bg-primary)' } : { color: 'var(--text-main)' }}
               >
                 <Cog6ToothIcon className="h-5 w-5" />
                 <span>Profile Settings</span>
               </Link>
 
+              <Link
+                href="/notifications"
+                className="flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-colors"
+                style={pathname === '/notifications' ? { backgroundColor: 'var(--accent)', color: 'var(--bg-primary)' } : { color: 'var(--text-main)' }}
+              >
+                <BellIcon className="h-5 w-5" />
+                <span>Notifications</span>
+              </Link>
+
               <button
                 onClick={handleLogout}
-                className="w-full flex items-center gap-3 px-4 py-3 rounded-xl font-medium text-sm text-rose-500 hover:bg-rose-500/10 transition-colors pt-2 cursor-pointer"
+                className="w-full flex items-center gap-3 px-4 py-3 rounded-xl font-medium text-rose-500 hover:bg-rose-500/10 transition-colors pt-2 cursor-pointer"
               >
                 <ArrowRightOnRectangleIcon className="h-5 w-5" />
                 <span>Sign Out</span>
@@ -452,7 +449,7 @@ const Header = () => {
             <div className="grid grid-cols-2 gap-2 pt-2">
               <Link
                 href="/login"
-                className="flex items-center justify-center gap-2 px-4 py-3 rounded-xl font-medium text-xs border transition-colors"
+                className="flex items-center justify-center gap-2 px-4 py-3 rounded-xl font-medium border transition-colors"
                 style={{ borderColor: 'var(--border-color)', color: 'var(--text-main)' }}
               >
                 <ArrowLeftOnRectangleIcon className="h-4 w-4" />
@@ -460,7 +457,7 @@ const Header = () => {
               </Link>
               <Link
                 href="/register"
-                className="flex items-center justify-center gap-2 px-4 py-3 rounded-xl font-medium text-xs transition-colors shadow-sm"
+                className="flex items-center justify-center gap-2 px-4 py-3 rounded-xl font-medium transition-colors shadow-sm"
                 style={{ backgroundColor: 'var(--accent)', color: 'var(--bg-primary)' }}
               >
                 <UserIcon className="h-4 w-4" />

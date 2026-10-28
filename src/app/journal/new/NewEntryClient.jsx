@@ -136,7 +136,7 @@ export default function NewEntryClient() {
       if (visibleSections.thoughts && thoughtsEditorRef.current && !editorInstanceRef.current.thoughts) {
         editorInstanceRef.current.thoughts = new EditorJS({
           holder: thoughtsEditorRef.current,
-          placeholder: 'Reflections... How could today have been even better?',
+          placeholder: 'How could today have been even better?',
           tools: editorTools,
         });
       }
@@ -276,13 +276,13 @@ export default function NewEntryClient() {
             data-aos="fade-down"
           >
             <div>
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold mb-2" style={{ backgroundColor: 'var(--card-bg)', color: 'var(--accent)', border: '1px solid var(--border-color)' }}>
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full font-semibold mb-2" style={{ backgroundColor: 'var(--card-bg)', color: 'var(--accent)', border: '1px solid var(--border-color)' }}>
                 <PencilSquareIcon className="h-3.5 w-3.5" />
-                <span>Medium-Style Story Editor</span>
+                <span>Journal Editor</span>
               </div>
               <h1 className="text-3xl font-bold font-theme-heading tracking-tight">New Journal Entry</h1>
               <p className="text-sm opacity-80 mt-1" style={{ color: 'var(--text-muted)' }}>
-                Customize your sections and draft your entry for {journalDate}.
+                Customize your sections for your entry for {journalDate}.
               </p>
             </div>
 
@@ -305,12 +305,12 @@ export default function NewEntryClient() {
               style={{ backgroundColor: 'var(--card-bg)', borderColor: 'var(--border-color)' }}
               data-aos="fade-up"
             >
-              <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider font-theme-heading opacity-80" style={{ color: 'var(--accent)' }}>
+              <div className="flex items-center gap-2 font-bold uppercase tracking-wider font-theme-heading opacity-80" style={{ color: 'var(--accent)' }}>
                 <AdjustmentsHorizontalIcon className="h-4 w-4" />
                 <span>Customize Entry Sections</span>
               </div>
               <div className="flex flex-wrap gap-3 pt-1">
-                <label className="inline-flex items-center gap-2 px-3 py-2 rounded-xl border text-xs font-medium cursor-pointer transition-colors" style={{ backgroundColor: 'var(--bg-primary)', borderColor: 'var(--border-color)' }}>
+                <label className="inline-flex items-center gap-2 px-3 py-2 rounded-xl border font-medium cursor-pointer transition-colors" style={{ backgroundColor: 'var(--bg-primary)', borderColor: 'var(--border-color)' }}>
                   <input 
                     type="checkbox" 
                     checked={visibleSections.highlights} 
@@ -320,7 +320,7 @@ export default function NewEntryClient() {
                   <span>Highlights</span>
                 </label>
 
-                <label className="inline-flex items-center gap-2 px-3 py-2 rounded-xl border text-xs font-medium cursor-pointer transition-colors" style={{ backgroundColor: 'var(--bg-primary)', borderColor: 'var(--border-color)' }}>
+                <label className="inline-flex items-center gap-2 px-3 py-2 rounded-xl border font-medium cursor-pointer transition-colors" style={{ backgroundColor: 'var(--bg-primary)', borderColor: 'var(--border-color)' }}>
                   <input 
                     type="checkbox" 
                     checked={visibleSections.gratitude} 
@@ -330,7 +330,7 @@ export default function NewEntryClient() {
                   <span>Gratitude</span>
                 </label>
 
-                <label className="inline-flex items-center gap-2 px-3 py-2 rounded-xl border text-xs font-medium cursor-pointer transition-colors" style={{ backgroundColor: 'var(--bg-primary)', borderColor: 'var(--border-color)' }}>
+                <label className="inline-flex items-center gap-2 px-3 py-2 rounded-xl border font-medium cursor-pointer transition-colors" style={{ backgroundColor: 'var(--bg-primary)', borderColor: 'var(--border-color)' }}>
                   <input 
                     type="checkbox" 
                     checked={visibleSections.thoughts} 
@@ -340,17 +340,17 @@ export default function NewEntryClient() {
                   <span>Reflection</span>
                 </label>
 
-                <label className="inline-flex items-center gap-2 px-3 py-2 rounded-xl border text-xs font-medium cursor-pointer transition-colors" style={{ backgroundColor: 'var(--bg-primary)', borderColor: 'var(--border-color)' }}>
+                <label className="inline-flex items-center gap-2 px-3 py-2 rounded-xl border font-medium cursor-pointer transition-colors" style={{ backgroundColor: 'var(--bg-primary)', borderColor: 'var(--border-color)' }}>
                   <input 
                     type="checkbox" 
                     checked={visibleSections.habits} 
                     onChange={() => toggleSection('habits')} 
                     className="rounded accent-[var(--accent)]"
                   />
-                  <span>Habit Checklist</span>
+                  <span>To Do Checklist</span>
                 </label>
 
-                <label className="inline-flex items-center gap-2 px-3 py-2 rounded-xl border text-xs font-medium cursor-pointer transition-colors" style={{ backgroundColor: 'var(--bg-primary)', borderColor: 'var(--border-color)' }}>
+                <label className="inline-flex items-center gap-2 px-3 py-2 rounded-xl border font-medium cursor-pointer transition-colors" style={{ backgroundColor: 'var(--bg-primary)', borderColor: 'var(--border-color)' }}>
                   <input 
                     type="checkbox" 
                     checked={visibleSections.categories} 
@@ -364,7 +364,7 @@ export default function NewEntryClient() {
 
             {/* Journal Date Input */}
             <div className="space-y-2" data-aos="fade-up" data-aos-delay="100">
-              <label className="block text-xs font-bold uppercase tracking-wider font-theme-heading opacity-80 flex items-center gap-1.5">
+              <label className="block text-lg font-bold uppercase tracking-wider font-theme-heading opacity-80 flex items-center gap-1.5">
                 <CalendarIcon className="h-4 w-4" style={{ color: 'var(--accent)' }} />
                 <span>Journal Date</span>
               </label>
@@ -384,15 +384,15 @@ export default function NewEntryClient() {
 
             {/* Story Title */}
             <div className="space-y-2" data-aos="fade-up" data-aos-delay="150">
-              <label className="block text-xs font-bold uppercase tracking-wider font-theme-heading opacity-80">
-                Story Title
+              <label className="block text-lg font-bold uppercase tracking-wider font-theme-heading opacity-80">
+                Journal Title
               </label>
               <input
                 type="text"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 placeholder="e.g., Reflections on System Architecture & Life"
-                className="w-full px-4 py-3.5 rounded-2xl border text-base focus:outline-none shadow-inner font-theme-heading font-semibold"
+                className="w-full px-4 py-3.5 rounded-2xl border text-lg focus:outline-none shadow-inner font-theme-heading"
                 style={{
                   backgroundColor: 'var(--card-bg)',
                   borderColor: 'var(--border-color)',
@@ -405,8 +405,8 @@ export default function NewEntryClient() {
             {/* Highlights Editor */}
             {visibleSections.highlights && (
               <div className="space-y-2" data-aos="fade-up" data-aos-delay="200">
-                <label className="block text-xs font-bold uppercase tracking-wider font-theme-heading opacity-80">
-                  Today's Highlights
+                <label className="block text-lg font-bold uppercase tracking-wider font-theme-heading opacity-80">
+                  Highlights of today
                 </label>
                 <div 
                   ref={highlightsEditorRef}
@@ -414,6 +414,7 @@ export default function NewEntryClient() {
                   style={{
                     backgroundColor: 'var(--card-bg)',
                     borderColor: 'var(--border-color)',
+                    fontSize: 'var(--text-lg)',
                   }}
                 />
               </div>
@@ -422,8 +423,8 @@ export default function NewEntryClient() {
             {/* Gratitude Editor */}
             {visibleSections.gratitude && (
               <div className="space-y-2" data-aos="fade-up" data-aos-delay="250">
-                <label className="block text-xs font-bold uppercase tracking-wider font-theme-heading opacity-80">
-                  Gratitude
+                <label className="block text-lg font-bold uppercase tracking-wider font-theme-heading opacity-80">
+                  Things I'm grateful for today
                 </label>
                 <div 
                   ref={gratitudeEditorRef}
@@ -431,6 +432,7 @@ export default function NewEntryClient() {
                   style={{
                     backgroundColor: 'var(--card-bg)',
                     borderColor: 'var(--border-color)',
+                    fontSize: 'var(--text-lg)',
                   }}
                 />
               </div>
@@ -439,8 +441,8 @@ export default function NewEntryClient() {
             {/* Better Day Thoughts Editor */}
             {visibleSections.thoughts && (
               <div className="space-y-2" data-aos="fade-up" data-aos-delay="300">
-                <label className="block text-xs font-bold uppercase tracking-wider font-theme-heading opacity-80">
-                  Better Day Thoughts (Reflection)
+                <label className="block text-lg font-bold uppercase tracking-wider font-theme-heading opacity-80">
+                  How could today have been better?
                 </label>
                 <div 
                   ref={thoughtsEditorRef}
@@ -448,6 +450,7 @@ export default function NewEntryClient() {
                   style={{
                     backgroundColor: 'var(--card-bg)',
                     borderColor: 'var(--border-color)',
+                    fontSize: 'var(--text-lg)',
                   }}
                 />
               </div>
@@ -465,9 +468,9 @@ export default function NewEntryClient() {
               <div className="space-y-6 pt-4 border-t" style={{ borderColor: 'var(--border-color)' }} data-aos="fade-up" data-aos-delay="400">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                   <div>
-                    <h2 className="text-lg font-bold font-theme-heading">Category & Pillar Sections</h2>
-                    <p className="text-xs opacity-75 mt-0.5" style={{ color: 'var(--text-muted)' }}>
-                      Enable or disable specific pillars for today's entry and record rich notes or tables.
+                    <h2 className="text-2xl font-bold font-theme-heading">Category Sections</h2>
+                    <p className="opacity-75 mt-0.5" style={{ color: 'var(--text-muted)' }}>
+                      Customize your journal entry by selecting relevant categories for today.
                     </p>
                   </div>
 
@@ -478,7 +481,7 @@ export default function NewEntryClient() {
                         key={cat.id}
                         type="button"
                         onClick={() => toggleCategory(cat.id)}
-                        className={`px-3 py-1.5 rounded-xl border text-xs font-medium transition-all cursor-pointer ${
+                        className={`px-3 py-1.5 rounded-xl border font-medium transition-all cursor-pointer ${
                           activeCategories[cat.id] ? 'shadow-sm' : 'opacity-40'
                         }`}
                         style={{
@@ -505,11 +508,11 @@ export default function NewEntryClient() {
                         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b pb-3" style={{ borderColor: 'var(--border-color)' }}>
                           <div className="flex items-center gap-2">
                             <TagIcon className="h-5 w-5" style={{ color: 'var(--accent)' }} />
-                            <h3 className="text-sm font-bold font-theme-heading uppercase tracking-wider">{cat.name}</h3>
+                            <h3 className="text-lg font-bold font-theme-heading uppercase tracking-wider">{cat.name}</h3>
                           </div>
 
                           <div className="flex items-center gap-2">
-                            <span className="text-xs font-bold uppercase tracking-wider opacity-60">Pillar Rating:</span>
+                            <span className="font-bold uppercase tracking-wider opacity-60">Section Rating:</span>
                             <div className="flex items-center gap-1">
                               {[1, 2, 3, 4, 5].map((star) => (
                                 <button
@@ -534,7 +537,7 @@ export default function NewEntryClient() {
                         <div 
                           ref={(el) => { categoryEditorsRefs.current[cat.id] = el; }}
                           className="p-6 rounded-2xl border shadow-inner min-h-[140px]"
-                          style={{ backgroundColor: 'var(--bg-primary)', borderColor: 'var(--border-color)' }}
+                          style={{ backgroundColor: 'var(--bg-primary)', borderColor: 'var(--border-color)', fontSize: 'var(--text-lg)' }}
                         />
                       </div>
                     );
