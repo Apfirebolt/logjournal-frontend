@@ -1,3 +1,4 @@
+import { Suspense } from 'react';
 import NewEntryClient from './NewEntryClient';
 
 export const metadata = {
@@ -6,5 +7,13 @@ export const metadata = {
 };
 
 export default function NewEntryPage() {
-  return <NewEntryClient />;
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center font-theme-body">
+        <p className="text-sm opacity-60">Loading editor...</p>
+      </div>
+    }>
+      <NewEntryClient />
+    </Suspense>
+  );
 }
