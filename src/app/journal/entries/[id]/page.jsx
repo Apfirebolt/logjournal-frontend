@@ -18,12 +18,22 @@ import {
   CheckCircleIcon,
   ClockIcon
 } from '@heroicons/react/24/outline';
+import AOS from 'aos';
+import 'aos/dist/aos.css';
 
 export default function EntryDetailPage() {
   const params = useParams();
   const router = useRouter();
   const { currentEntry, fetchEntryById, loading } = useJournalStore();
   const entryId = params?.id;
+
+  useEffect(() => {
+    AOS.init({
+      duration: 800,
+      once: true,
+      easing: 'ease-out-cubic',
+    });
+  }, []);
 
   useEffect(() => {
     if (entryId) {
@@ -44,9 +54,9 @@ export default function EntryDetailPage() {
           case 'header': {
             const level = block.data.level || 2;
             const sizeClasses = 
-              level === 1 ? 'text-3xl sm:text-4xl font-extrabold tracking-tight mt-10 mb-4' :
-              level === 2 ? 'text-2xl sm:text-3xl font-bold tracking-tight mt-8 mb-3' :
-              'text-xl font-semibold mt-6 mb-2.5';
+              level === 1 ? 'text-3xl sm:text-4xl font-extrabold tracking-tight mt-8 mb-4' :
+              level === 2 ? 'text-2xl sm:text-3xl font-bold tracking-tight mt-6 mb-3' :
+              'text-xl font-semibold mt-5 mb-2';
             
             return React.createElement(
               `h${level}`,
@@ -63,7 +73,7 @@ export default function EntryDetailPage() {
             return (
               <p 
                 key={index} 
-                className="text-base sm:text-lg leading-relaxed mb-6 font-theme-body opacity-95"
+                className="text-lg sm:text-xl leading-relaxed mb-6 font-theme-body opacity-95"
                 style={{ color: 'var(--text-main)' }}
                 dangerouslySetInnerHTML={{ __html: block.data.text }} 
               />
@@ -76,7 +86,7 @@ export default function EntryDetailPage() {
             
             return (
               <div key={index} className="my-6 pl-6">
-                <ListTag className={`${listStyleClass} space-y-3 text-base sm:text-lg opacity-95`} style={{ color: 'var(--text-main)' }}>
+                <ListTag className={`${listStyleClass} space-y-3 text-lg sm:text-xl opacity-95`} style={{ color: 'var(--text-main)' }}>
                   {block.data.items.map((item, i) => {
                     const itemContent = typeof item === 'string' ? item : item.content;
                     return (
@@ -96,7 +106,7 @@ export default function EntryDetailPage() {
             return (
               <blockquote 
                 key={index} 
-                className="pl-6 py-2 my-8 border-l-4 italic text-lg sm:text-xl font-theme-heading space-y-2"
+                className="pl-6 py-3 my-8 border-l-4 italic text-xl sm:text-2xl font-theme-heading space-y-2"
                 style={{ 
                   borderColor: 'var(--accent)',
                   color: 'var(--text-main)'
@@ -104,7 +114,7 @@ export default function EntryDetailPage() {
               >
                 <p>"{block.data.text}"</p>
                 {block.data.caption && (
-                  <footer className="text-xs not-italic opacity-60 font-mono tracking-wider uppercase">
+                  <footer className="not-italic opacity-60 font-mono tracking-wider uppercase">
                     — {block.data.caption}
                   </footer>
                 )}
@@ -116,7 +126,7 @@ export default function EntryDetailPage() {
             if (!codeText) return null;
 
             return (
-              <div key={index} className="my-8 rounded-2xl border overflow-hidden shadow-lg font-mono text-xs sm:text-sm" style={{ backgroundColor: '#0D1117', borderColor: 'var(--border-color)' }}>
+              <div key={index} className="my-8 rounded-2xl border overflow-hidden shadow-lg font-mono" style={{ backgroundColor: '#0D1117', borderColor: 'var(--border-color)' }}>
                 <div className="px-4 py-2.5 border-b flex items-center justify-between opacity-60 text-[10px] uppercase tracking-widest" style={{ borderColor: 'var(--border-color)', backgroundColor: '#161B22', color: '#8B949E' }}>
                   <span>Code Snippet</span>
                 </div>
@@ -133,7 +143,7 @@ export default function EntryDetailPage() {
 
             return (
               <div key={index} className="my-8 overflow-x-auto rounded-2xl border shadow-sm" style={{ borderColor: 'var(--border-color)' }}>
-                <table className="w-full text-left border-collapse text-sm font-theme-body">
+                <table className="w-full text-left border-collapse text-base font-theme-body">
                   <tbody>
                     {content.map((row, rowIndex) => (
                       <tr key={rowIndex} className="border-b" style={{ borderColor: 'var(--border-color)' }}>
@@ -171,14 +181,14 @@ export default function EntryDetailPage() {
             return (
               <p 
                 key={index} 
-                className="text-base sm:text-lg mb-4 opacity-95 font-theme-body"
+                className="text-lg sm:text-xl mb-4 opacity-95 font-theme-body"
                 dangerouslySetInnerHTML={{ __html: block.data?.text || '' }} 
               />
             );
         }
       });
     } catch (e) {
-      return <p className="text-base sm:text-lg leading-relaxed opacity-95 font-theme-body">{String(input)}</p>;
+      return <p className="text-lg sm:text-xl leading-relaxed opacity-95 font-theme-body">{String(input)}</p>;
     }
   };
 
@@ -188,7 +198,7 @@ export default function EntryDetailPage() {
         <div className="min-h-screen flex flex-col font-theme-body" style={{ backgroundColor: 'var(--bg-primary)', color: 'var(--text-main)' }}>
           <Header />
           <main className="flex-grow flex items-center justify-center">
-            <p className="text-sm opacity-60">Loading story...</p>
+            <p className="text-sm font-bold animate-pulse opacity-60">Loading story...</p>
           </main>
           <Footer />
         </div>
@@ -201,13 +211,15 @@ export default function EntryDetailPage() {
       <AuthGuard>
         <div className="min-h-screen flex flex-col font-theme-body" style={{ backgroundColor: 'var(--bg-primary)', color: 'var(--text-main)' }}>
           <Header />
-          <main className="flex-grow flex flex-col items-center justify-center space-y-4 px-6">
-            <BookOpenIcon className="h-12 w-12 opacity-40" style={{ color: 'var(--accent)' }} />
+          <main className="flex-grow flex flex-col items-center justify-center space-y-4 px-6 text-center">
+            <div className="w-16 h-16 rounded-2xl flex items-center justify-center border shadow-inner" style={{ backgroundColor: 'var(--card-bg)', borderColor: 'var(--border-color)', color: 'var(--accent)' }}>
+              <BookOpenIcon className="h-8 w-8" />
+            </div>
             <h2 className="text-2xl font-bold font-theme-heading">Story Not Found</h2>
-            <p className="text-sm opacity-70">The journal entry you are looking for does not exist or has been removed.</p>
+            <p className="text-sm opacity-75 max-w-sm">The journal entry you are looking for does not exist or has been removed.</p>
             <Link
               href="/journal/entries"
-              className="px-5 py-2.5 rounded-xl text-xs font-semibold shadow-sm transition-all hover:scale-105"
+              className="px-6 py-3 rounded-2xl text-xs font-semibold shadow-lg transition-all hover:scale-105"
               style={{ backgroundColor: 'var(--accent)', color: 'var(--bg-primary)' }}
             >
               Back to Archives
@@ -229,22 +241,27 @@ export default function EntryDetailPage() {
       >
         <Header />
 
-        {/* Medium-style narrow reading container */}
-        <main className="flex-grow max-w-2xl mx-auto px-6 py-16 w-full space-y-12">
+        {/* Structured Container matching edit/create pages */}
+        <main className="flex-grow max-w-4xl mx-auto px-6 py-12 w-full space-y-10">
           
-          {/* Navigation & Edit Action */}
-          <div className="flex items-center justify-between">
+          {/* Navigation & Edit Action Bar */}
+          <div 
+            className="flex items-center justify-between border-b pb-6" 
+            style={{ borderColor: 'var(--border-color)' }}
+            data-aos="fade-down"
+          >
             <button
               onClick={() => router.back()}
-              className="inline-flex items-center gap-2 text-xs font-semibold transition-opacity opacity-75 hover:opacity-100 cursor-pointer"
+              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl font-semibold border transition-all hover:opacity-80 cursor-pointer"
+              style={{ backgroundColor: 'var(--card-bg)', borderColor: 'var(--border-color)', color: 'var(--text-main)' }}
             >
-              <ArrowLeftIcon className="h-4 w-4" />
-              <span>Back to Stories</span>
+              <ArrowLeftIcon className="h-4 w-4" style={{ color: 'var(--accent)' }} />
+              <span>Back to Entries</span>
             </button>
 
             <Link
               href={`/journal/entries/${entryId}/edit`}
-              className="px-4 py-2 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-all shadow-sm hover:scale-105"
+              className="px-5 py-2.5 rounded-2xl font-semibold flex items-center gap-2 shadow-sm transition-all hover:scale-105"
               style={{ 
                 backgroundColor: 'var(--card-bg)', 
                 borderColor: 'var(--border-color)', 
@@ -253,90 +270,99 @@ export default function EntryDetailPage() {
               }}
             >
               <PencilSquareIcon className="h-4 w-4" style={{ color: 'var(--accent)' }} />
-              <span>Edit Story</span>
+              <span>Edit Journal Entry</span>
             </Link>
           </div>
 
-          {/* Article Header (Medium Style) */}
-          <header className="space-y-6 border-b pb-8" style={{ borderColor: 'var(--border-color)' }}>
-            <h1 className="text-3xl sm:text-5xl font-bold font-theme-heading tracking-tight leading-tight" style={{ color: 'var(--text-main)' }}>
+          {/* Article Header */}
+          <header className="space-y-6 border-b pb-8" style={{ borderColor: 'var(--border-color)' }} data-aos="fade-up">
+            <h1 className="text-3xl sm:text-5xl font-extrabold font-theme-heading tracking-tight leading-tight" style={{ color: 'var(--text-main)' }}>
               {currentEntry.title}
             </h1>
 
             {/* Author / Date Bar */}
-            <div className="flex items-center justify-between text-xs opacity-70 font-mono">
-              <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold font-theme-heading" style={{ backgroundColor: 'var(--accent)', color: 'var(--bg-primary)' }}>
-                  LJ
-                </div>
+            <div className="flex items-center justify-between opacity-80">
+              <div className="flex items-center gap-3">
                 <div>
-                  <p className="font-semibold" style={{ color: 'var(--text-main)' }}>Personal Journal</p>
-                  <p className="opacity-60">{new Date(entryDate || Date.now()).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</p>
+                  <p className="opacity-65">{new Date(entryDate || Date.now()).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</p>
                 </div>
               </div>
 
-              <div className="flex items-center gap-1">
-                <ClockIcon className="h-3.5 w-3.5" />
+              <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border" style={{ backgroundColor: 'var(--card-bg)', borderColor: 'var(--border-color)' }}>
+                <ClockIcon className="h-3.5 w-3.5" style={{ color: 'var(--accent)' }} />
                 <span>3 min read</span>
               </div>
             </div>
           </header>
 
           {/* Continuous Story Content Flow */}
-          <article className="space-y-10">
+          <article className="space-y-8" data-aos="fade-up" data-aos-delay="100">
             
-            {/* Highlights */}
+            {/* Highlights Card Container */}
             {currentEntry.highlights && (
-              <section className="space-y-4">
-                <div className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-widest opacity-60" style={{ color: 'var(--accent)' }}>
-                  <SparklesIcon className="h-4 w-4" />
-                  <span>Highlights</span>
+              <div 
+                className="p-6 sm:p-8 rounded-3xl border shadow-sm space-y-4"
+                style={{ backgroundColor: 'var(--card-bg)', borderColor: 'var(--border-color)' }}
+              >
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full font-semibold" style={{ backgroundColor: 'var(--bg-primary)', color: 'var(--accent)', border: '1px solid var(--border-color)' }}>
+                  <SparklesIcon className="h-3.5 w-3.5" />
+                  <span>Highlights of {new Date(entryDate || Date.now()).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</span>
                 </div>
-                <div className="prose prose-lg max-w-none">
+                <div className="prose prose-lg max-w-none pt-1">
                   {renderEditorBlocks(currentEntry.highlights)}
                 </div>
-              </section>
+              </div>
             )}
 
-            {/* Gratitude */}
+            {/* Gratitude Card Container */}
             {currentEntry.gratitude && (
-              <section className="space-y-4 pt-6 border-t" style={{ borderColor: 'var(--border-color)' }}>
-                <div className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-widest opacity-60" style={{ color: 'var(--accent)' }}>
-                  <StarIcon className="h-4 w-4" />
-                  <span>Gratitude</span>
+              <div 
+                className="p-6 sm:p-8 rounded-3xl border shadow-sm space-y-4"
+                style={{ backgroundColor: 'var(--card-bg)', borderColor: 'var(--border-color)' }}
+              >
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full font-semibold" style={{ backgroundColor: 'var(--bg-primary)', color: 'var(--accent)', border: '1px solid var(--border-color)' }}>
+                  <StarIcon className="h-3.5 w-3.5" />
+                  <span>I'd like to express gratitude for</span>
                 </div>
-                <div className="prose prose-lg max-w-none">
+                <div className="prose prose-lg max-w-none pt-1">
                   {renderEditorBlocks(currentEntry.gratitude)}
                 </div>
-              </section>
+              </div>
             )}
 
-            {/* Reflection & Improvements */}
+            {/* Reflection Card Container */}
             {currentEntry.better_day_thoughts && (
-              <section className="space-y-4 pt-6 border-t" style={{ borderColor: 'var(--border-color)' }}>
-                <div className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-widest opacity-60" style={{ color: 'var(--accent)' }}>
-                  <BookOpenIcon className="h-4 w-4" />
-                  <span>Reflection & Improvements</span>
+              <div 
+                className="p-6 sm:p-8 rounded-3xl border shadow-sm space-y-4"
+                style={{ backgroundColor: 'var(--card-bg)', borderColor: 'var(--border-color)' }}
+              >
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full font-semibold" style={{ backgroundColor: 'var(--bg-primary)', color: 'var(--accent)', border: '1px solid var(--border-color)' }}>
+                  <BookOpenIcon className="h-3.5 w-3.5" />
+                  <span>How I can have a better day</span>
                 </div>
-                <div className="prose prose-lg max-w-none">
+                <div className="prose prose-lg max-w-none pt-1">
                   {renderEditorBlocks(currentEntry.better_day_thoughts)}
                 </div>
-              </section>
+              </div>
             )}
 
             {/* Daily Habits & Tasks Checklist */}
             {currentEntry.habits && currentEntry.habits.length > 0 && (
-              <section className="space-y-4 pt-6 border-t" style={{ borderColor: 'var(--border-color)' }}>
-                <div className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-widest opacity-60" style={{ color: 'var(--accent)' }}>
-                  <CheckCircleIcon className="h-4 w-4" />
+              <div 
+                className="p-6 sm:p-8 rounded-3xl border shadow-sm space-y-5"
+                style={{ backgroundColor: 'var(--card-bg)', borderColor: 'var(--border-color)' }}
+              >
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full font-semibold" style={{ backgroundColor: 'var(--bg-primary)', color: 'var(--accent)', border: '1px solid var(--border-color)' }}>
+                  <CheckCircleIcon className="h-3.5 w-3.5" />
                   <span>Daily Habits & Tasks</span>
                 </div>
-                <div className="space-y-2 pt-2">
+                
+                <div className="space-y-2.5 pt-1">
                   {currentEntry.habits.map((habit, idx) => (
                     <div 
                       key={idx} 
-                      className="p-3 rounded-xl border flex items-center gap-3 transition-colors" 
-                      style={{ backgroundColor: 'var(--card-bg)', borderColor: 'var(--border-color)' }}
+                      className="p-3.5 rounded-2xl border flex items-center gap-3.5 transition-colors" 
+                      style={{ backgroundColor: 'var(--bg-primary)', borderColor: 'var(--border-color)' }}
                     >
                       <input 
                         type="checkbox" 
@@ -344,43 +370,52 @@ export default function EntryDetailPage() {
                         disabled 
                         className="w-4 h-4 rounded accent-[var(--accent)] cursor-default" 
                       />
-                      <span className={`text-sm font-medium ${habit.is_completed ? 'line-through opacity-50' : ''}`} style={{ color: 'var(--text-main)' }}>
+                      <span className={`text-base font-medium ${habit.is_completed ? 'line-through opacity-50' : ''}`} style={{ color: 'var(--text-main)' }}>
                         {habit.task_name}
                       </span>
                     </div>
                   ))}
                 </div>
-              </section>
+              </div>
             )}
 
             {/* Custom Category & Pillar Sections */}
             {currentEntry.category_sections && currentEntry.category_sections.length > 0 && (
-              <div className="space-y-10 pt-8 border-t" style={{ borderColor: 'var(--border-color)' }}>
-                <h3 className="text-xl font-bold font-theme-heading">Category & Pillar Insights</h3>
-                <div className="space-y-10">
+              <div className="space-y-6 pt-4 border-t" style={{ borderColor: 'var(--border-color)' }}>
+                <h3 className="text-2xl font-bold font-theme-heading">Category & Pillar Insights</h3>
+                
+                <div className="space-y-6">
                   {currentEntry.category_sections.map((section, idx) => (
-                    <section key={section.id || idx} className="space-y-4">
-                      <div className="flex items-center justify-between border-b pb-2" style={{ borderColor: 'var(--border-color)' }}>
-                        <div className="flex items-center gap-2">
-                          <TagIcon className="h-4 w-4" style={{ color: 'var(--accent)' }} />
-                          <h4 className="text-base font-bold font-theme-heading uppercase tracking-wider">{section.category_name || 'Pillar'}</h4>
+                    <div 
+                      key={section.id || idx}
+                      className="p-6 sm:p-8 rounded-3xl border shadow-sm space-y-5"
+                      style={{ backgroundColor: 'var(--card-bg)', borderColor: 'var(--border-color)' }}
+                    >
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b pb-4" style={{ borderColor: 'var(--border-color)' }}>
+                        <div className="flex items-center gap-2.5">
+                          <TagIcon className="h-5 w-5" style={{ color: 'var(--accent)' }} />
+                          <h4 className="text-lg font-bold font-theme-heading uppercase tracking-wider">{section.category_name || 'Pillar'}</h4>
                         </div>
 
                         {section.rating_score !== null && section.rating_score !== undefined && (
-                          <div className="flex items-center gap-1.5 text-xs">
-                            <span className="opacity-60 uppercase tracking-widest font-mono">Rating:</span>
-                            <div className="flex items-center gap-1 font-bold">
-                              <StarIcon className="h-4 w-4 text-amber-400 fill-amber-400" />
-                              <span>{section.rating_score} / 5</span>
+                          <div className="flex items-center gap-2">
+                            <span className="font-bold uppercase tracking-wider opacity-60">Section Rating:</span>
+                            <div className="flex items-center gap-1">
+                              {[1, 2, 3, 4, 5].map((star) => (
+                                <StarIcon 
+                                  key={star}
+                                  className={`h-4 w-4 ${section.rating_score >= star ? 'text-amber-400 fill-amber-400' : 'opacity-20'}`}
+                                />
+                              ))}
                             </div>
                           </div>
                         )}
                       </div>
 
-                      <div className="prose prose-lg max-w-none pt-2">
+                      <div className="prose prose-lg max-w-none pt-1">
                         {renderEditorBlocks(section.content)}
                       </div>
-                    </section>
+                    </div>
                   ))}
                 </div>
               </div>
