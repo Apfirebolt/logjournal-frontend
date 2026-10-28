@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import httpClient from '@/lib/api';
 import Cookie from 'js-cookie';
+import axios from 'axios';
 
 // Helper to get authorization headers from cookies
 const getAuthHeaders = () => {
@@ -33,7 +34,7 @@ export const useAuthStore = create((set, get) => ({
     set({ loading: true, error: null });
     try {
       // Your FastAPI backend expects { "token": credential }
-      const res = await httpClient.post('/api/auth/google', { token: credential });
+      const res = await httpClient.post('/auth/google', { token: credential });
       const data = res.data; // Expected: { access_token, token_type, user }
 
       // Save tokens and user info in cookies (matching your preferred naming convention)

@@ -104,7 +104,7 @@ export default function RegisterPage() {
                   <BookOpenIcon className="h-7 w-7" />
                 </div>
                 <h1 className="text-2xl font-extrabold tracking-tight font-theme-heading">
-                  Log<span style={{ color: 'var(--accent)' }}>Journal</span>
+                  Softgenie <span style={{ color: 'var(--accent)' }}>Journal</span>
                 </h1>
                 <p className="text-xs font-theme-body leading-relaxed text-center opacity-80" style={{ color: 'var(--text-muted)' }}>
                   Create your account to start tracking your daily reflections and category growth.
