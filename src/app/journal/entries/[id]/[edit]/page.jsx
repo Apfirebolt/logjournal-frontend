@@ -20,7 +20,7 @@ export default function EditEntryPage() {
   const [title, setTitle] = useState('');
   const [journalDate, setJournalDate] = useState('');
   const [categoryRatings, setCategoryRatings] = useState({});
-  const [habits, setHabits] = useState({});
+  const [habits, setHabits] = useState([]); // Fixed: initialized as an empty array
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Section visibility toggle state
@@ -32,7 +32,6 @@ export default function EditEntryPage() {
     categories: true,
   });
 
-  // Individual category visibility toggles: { [categoryId]: boolean }
   const [activeCategories, setActiveCategories] = useState({});
 
   const highlightsEditorRef = useRef(null);
@@ -54,6 +53,21 @@ export default function EditEntryPage() {
     }
   }, [entryId, fetchCategories, fetchEntryById]);
 
+  // Robust block parser to guarantee an array for Editor.js
+  const parseBlocks = (dataStr) => {
+    if (!dataStr) return [];
+    try {
+      const parsed = typeof dataStr === 'string' ? JSON.parse(dataStr) : dataStr;
+      if (Array.isArray(parsed)) return parsed;
+      if (typeof parsed === 'object' && parsed !== null) {
+        return parsed.blocks || [{ type: 'paragraph', data: { text: String(parsed.text || '') } }];
+      }
+      return [{ type: 'paragraph', data: { text: String(parsed) } }];
+    } catch (e) {
+      return [{ type: 'paragraph', data: { text: String(dataStr) } }];
+    }
+  };
+
   // Pre-fill form when currentEntry is loaded
   useEffect(() => {
     if (currentEntry) {
@@ -70,13 +84,12 @@ export default function EditEntryPage() {
         initialRatings[sec.category_id] = sec.rating_score;
         initialActiveCats[sec.category_id] = true;
         if (sec.content) {
-          initialCategoryBlocks[sec.category_id] = typeof sec.content === 'string' ? JSON.parse(sec.content) : sec.content;
+          initialCategoryBlocks[sec.category_id] = parseBlocks(sec.content);
         }
       });
       setCategoryRatings(initialRatings);
       setActiveCategories(initialActiveCats);
 
-      // Set visibility flags based on what data exists in the fetched entry
       setVisibleSections({
         highlights: Boolean(currentEntry.highlights),
         gratitude: Boolean(currentEntry.gratitude),
@@ -85,7 +98,7 @@ export default function EditEntryPage() {
         categories: Boolean(currentEntry.category_sections && currentEntry.category_sections.length > 0),
       });
 
-      if (currentEntry.habits) {
+      if (Array.isArray(currentEntry.habits)) {
         setHabits(currentEntry.habits);
       }
 
@@ -114,15 +127,6 @@ export default function EditEntryPage() {
           marker: MarkerBlock,
           code: CodeBlock,
           table: TableBlock,
-        };
-
-        const parseBlocks = (dataStr) => {
-          if (!dataStr) return [];
-          try {
-            return typeof dataStr === 'string' ? JSON.parse(dataStr) : dataStr;
-          } catch (e) {
-            return [{ type: 'paragraph', data: { text: String(dataStr) } }];
-          }
         };
 
         if (highlightsEditorRef.current && !editorInstanceRef.current.highlights) {
