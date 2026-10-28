@@ -28,6 +28,27 @@ export const useAuthStore = create((set, get) => ({
     }
   },
 
+  // Google Login action matching your FastAPI backend format
+  googleLogin: async (credential) => {
+    set({ loading: true, error: null });
+    try {
+      // Your FastAPI backend expects { "token": credential }
+      const res = await httpClient.post('/api/auth/google', { token: credential });
+      const data = res.data; // Expected: { access_token, token_type, user }
+
+      // Save tokens and user info in cookies (matching your preferred naming convention)
+      Cookie.set('token', data.access_token, { expires: 7 });
+      Cookie.set('user', JSON.stringify(data.user), { expires: 7 });
+
+      set({ user: data.user, isAuthenticated: true, loading: false });
+      return { success: true };
+    } catch (err) {
+      const errorMsg = err.response?.data?.detail || err.message || "Google authentication failed.";
+      set({ error: errorMsg, loading: false });
+      return { success: false, error: errorMsg };
+    }
+  },
+
   login: async (credentials) => {
     set({ loading: true, error: null });
     try {
