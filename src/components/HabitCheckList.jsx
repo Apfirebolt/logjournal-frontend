@@ -6,31 +6,36 @@ import { PlusIcon, TrashIcon, CheckCircleIcon } from '@heroicons/react/24/outlin
 export default function HabitChecklist({ habits = [], onChange }) {
   const [newHabitName, setNewHabitName] = useState('');
 
+  // Safeguard habits array
+  const safeHabits = Array.isArray(habits) ? habits : [];
+
   const handleAddHabit = (e) => {
     e.preventDefault();
     if (!newHabitName.trim()) return;
 
-    const updated = [...habits, { task_name: newHabitName.trim(), is_completed: false }];
+    const updated = [...safeHabits, { task_name: newHabitName.trim(), is_completed: false }];
     onChange(updated);
     setNewHabitName('');
   };
 
   const handleKeyDown = (e) => {
     if (e.key === 'Enter') {
-      e.preventDefault(); // Prevent parent form from submitting
+      e.preventDefault();
       handleAddHabit(e);
     }
   };
 
   const toggleHabit = (index) => {
-    const updated = habits.map((h, i) => (i === index ? { ...h, is_completed: !h.is_completed } : h));
+    const updated = safeHabits.map((h, i) => (i === index ? { ...h, is_completed: !h.is_completed } : h));
     onChange(updated);
   };
 
   const removeHabit = (index) => {
-    const updated = habits.filter((_, i) => i !== index);
+    const updated = safeHabits.filter((_, i) => i !== index);
     onChange(updated);
   };
+
+  const completedCount = safeHabits.filter((h) => h.is_completed).length;
 
   return (
     <div 
@@ -43,11 +48,10 @@ export default function HabitChecklist({ habits = [], onChange }) {
           <h3 className="text-sm font-bold font-theme-heading uppercase tracking-wider">Daily Habits & Tasks</h3>
         </div>
         <span className="text-xs font-mono opacity-60">
-          {habits.filter((h) => h.is_completed).length} / {habits.length} Completed
+          {completedCount} / {safeHabits.length} Completed
         </span>
       </div>
 
-      {/* Replaced <form> with a <div> container to prevent nesting violations */}
       <div className="flex gap-2">
         <input
           type="text"
@@ -71,10 +75,10 @@ export default function HabitChecklist({ habits = [], onChange }) {
 
       {/* Habits List */}
       <div className="space-y-2">
-        {habits.length === 0 ? (
+        {safeHabits.length === 0 ? (
           <p className="text-xs opacity-50 italic py-2">No habits added for today yet.</p>
         ) : (
-          habits.map((habit, idx) => (
+          safeHabits.map((habit, idx) => (
             <div 
               key={idx}
               className="p-3 rounded-xl border flex items-center justify-between gap-3 transition-all"
@@ -83,7 +87,7 @@ export default function HabitChecklist({ habits = [], onChange }) {
               <label className="flex items-center gap-3 cursor-pointer flex-grow select-none">
                 <input
                   type="checkbox"
-                  checked={habit.is_completed}
+                  checked={Boolean(habit.is_completed)}
                   onChange={() => toggleHabit(idx)}
                   className="w-4 h-4 rounded border accent-[var(--accent)] cursor-pointer"
                 />
