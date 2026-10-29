@@ -6,6 +6,7 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import AuthGuard from '@/components/AuthGuard';
 import HabitChecklist from '@/components/HabitCheckList';
+import TagSelector from '@/components/TagSelector';
 import { useJournalStore } from '@/store/useJournalStore';
 import { PencilSquareIcon, CheckIcon, StarIcon, ArrowLeftIcon, TagIcon, CalendarIcon, AdjustmentsHorizontalIcon } from '@heroicons/react/24/outline';
 import { toast } from 'react-toastify';
@@ -17,6 +18,7 @@ export default function EditEntryClient({ entryId }) {
 
   const [title, setTitle] = useState('');
   const [journalDate, setJournalDate] = useState('');
+  const [tags, setTags] = useState([]);
   const [categoryRatings, setCategoryRatings] = useState({});
   const [habits, setHabits] = useState([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -72,6 +74,11 @@ export default function EditEntryClient({ entryId }) {
       setTitle(currentEntry.title || '');
       if (currentEntry.journal_date) {
         setJournalDate(new Date(currentEntry.journal_date).toISOString().split('T')[0]);
+      }
+
+      // Pre-fill tags
+      if (Array.isArray(currentEntry.tags)) {
+        setTags(currentEntry.tags.map(t => typeof t === 'string' ? t : t.name));
       }
 
       const initialRatings = {};
@@ -232,6 +239,7 @@ export default function EditEntryClient({ entryId }) {
         better_day_thoughts: thoughtsData ? JSON.stringify(thoughtsData.blocks) : '',
         category_sections,
         habits: visibleSections.habits ? habits : [],
+        tags: tags,
       };
 
       const result = await updateEntry(entryId, payload);
@@ -365,6 +373,11 @@ export default function EditEntryClient({ entryId }) {
                 style={{ backgroundColor: 'var(--card-bg)', borderColor: 'var(--border-color)', color: 'var(--text-main)' }}
                 required
               />
+            </div>
+
+            {/* Tag Selector Component Integration */}
+            <div>
+              <TagSelector selectedTags={tags} onChange={setTags} />
             </div>
 
             {/* Highlights Editor */}
