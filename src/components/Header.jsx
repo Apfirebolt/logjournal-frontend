@@ -119,22 +119,22 @@ const Header = () => {
         {/* Desktop Navigation Links */}
         <nav className="hidden md:block">
           <ul className="flex items-center gap-2 font-theme-body">
-            <li>
-              <Link 
-                href="/" 
-                className={`px-4 py-2 rounded-xl font-medium flex items-center space-x-2 transition-all whitespace-nowrap ${
-                  pathname === '/' ? 'shadow-sm' : 'opacity-80 hover:opacity-100 hover:bg-black/5 dark:hover:bg-white/5'
-                }`}
-                style={pathname === '/' ? { backgroundColor: 'var(--accent)', color: 'var(--bg-primary)' } : { color: 'var(--text-main)' }}
-              >
-                <HomeIcon className="h-4 w-4" />
-                <span>Dashboard</span>
-              </Link>
-            </li>
 
             {/* Only authenticated users can write and view entries/analytics/notifications */}
             {isAuthenticated && (
               <>
+                <li>
+                  <Link 
+                    href="/" 
+                    className={`px-4 py-2 rounded-xl font-medium flex items-center space-x-2 transition-all whitespace-nowrap ${
+                      pathname === '/' ? 'shadow-sm' : 'opacity-80 hover:opacity-100 hover:bg-black/5 dark:hover:bg-white/5'
+                    }`}
+                    style={pathname === '/' ? { backgroundColor: 'var(--accent)', color: 'var(--bg-primary)' } : { color: 'var(--text-main)' }}
+                  >
+                    <HomeIcon className="h-4 w-4" />
+                    <span>Dashboard</span>
+                  </Link>
+                </li>
                 <li>
                   <Link 
                     href="/journal/new" 
@@ -204,7 +204,7 @@ const Header = () => {
               aria-label="Select theme"
             >
               <SwatchIcon className="h-4 w-4" style={{ color: 'var(--accent)' }} />
-              <span className="hidden sm:inline font-semibold uppercase tracking-wider">
+              <span className="hidden sm:inline font-semibold uppercase tracking-wider text-sm">
                 {currentTheme}
               </span>
             </button>

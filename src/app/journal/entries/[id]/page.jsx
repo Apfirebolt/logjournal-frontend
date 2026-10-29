@@ -503,7 +503,7 @@ export default function EntryDetailPage() {
 
                 return (
                   <div className="space-y-6 pt-4 border-t" style={{ borderColor: 'var(--border-color)' }}>
-                    <h3 className="text-2xl font-bold font-theme-heading">Category & Pillar Insights</h3>
+                    <h3 className="text-2xl font-bold font-theme-heading">Sections</h3>
                     
                     <div className="space-y-6">
                       {validSections.map((section, idx) => (

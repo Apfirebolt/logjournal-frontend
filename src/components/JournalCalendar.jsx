@@ -9,7 +9,8 @@ import {
   CalendarDaysIcon, 
   XMarkIcon,
   BookOpenIcon,
-  ArrowRightIcon
+  ArrowRightIcon,
+  CheckCircleIcon
 } from '@heroicons/react/24/outline';
 import { Dialog, DialogPanel, DialogTitle, Transition, TransitionChild } from '@headlessui/react';
 
@@ -69,16 +70,12 @@ export default function JournalCalendar({ entries = [], onSelectDate }) {
   }
   const daysMissed = daysInMonth - daysWithEntriesCount;
 
-  // Handle cell click
+  // Handle cell click: Opens modal if entries exist, navigates to create page if empty
   const handleCellClick = (dateKey, dayEntries) => {
-    if (dayEntries.length > 0) {
-      setSelectedDayData({ dateStr: dateKey, entries: dayEntries });
-      setIsDayModalOpen(true);
-      if (onSelectDate) {
-        onSelectDate(dateKey, dayEntries);
-      }
-    } else {
-      router.push(`/journal/new?date=${dateKey}`);
+    setSelectedDayData({ dateStr: dateKey, entries: dayEntries });
+    setIsDayModalOpen(true);
+    if (onSelectDate) {
+      onSelectDate(dateKey, dayEntries);
     }
   };
 
@@ -277,7 +274,7 @@ export default function JournalCalendar({ entries = [], onSelectDate }) {
         {calendarCells}
       </div>
 
-      {/* Day Details Inspection Modal */}
+      {/* Day Details Inspection Modal / Notice */}
       <Transition appear show={isDayModalOpen} as={Fragment}>
         <Dialog as="div" className="relative z-50" onClose={() => setIsDayModalOpen(false)}>
           <TransitionChild
@@ -319,11 +316,8 @@ export default function JournalCalendar({ entries = [], onSelectDate }) {
                       </div>
                       <div>
                         <DialogTitle as="h3" className="text-sm sm:text-base font-extrabold font-theme-heading">
-                          Journal Entries for {selectedDayData?.dateStr}
+                          Journal Entry for {selectedDayData?.dateStr}
                         </DialogTitle>
-                        <p className="text-xs font-mono font-bold opacity-70" style={{ color: 'var(--text-muted)' }}>
-                          Total Entries: <span style={{ color: 'var(--accent)' }}>{selectedDayData?.entries.length || 0}</span>
-                        </p>
                       </div>
                     </div>
                     <button
@@ -335,52 +329,61 @@ export default function JournalCalendar({ entries = [], onSelectDate }) {
                     </button>
                   </div>
 
-                  {/* Entries List */}
-                  <div className="space-y-3 max-h-[60vh] overflow-y-auto pr-1">
-                    {selectedDayData?.entries.map((entry, idx) => (
-                      <Link 
-                        key={entry.id || idx}
-                        href={`/journal/entries/${entry.id}`}
-                        onClick={() => setIsDayModalOpen(false)}
-                        className="p-4 rounded-2xl border flex items-center justify-between gap-4 transition-all hover:scale-[1.01] group cursor-pointer"
-                        style={{ backgroundColor: 'var(--bg-primary)', borderColor: 'var(--border-color)' }}
-                      >
-                        <div className="space-y-1">
-                          <div className="flex items-center gap-2">
-                            <span className="px-2 py-0.5 rounded-md text-[10px] font-bold font-mono border" style={{ backgroundColor: 'var(--card-bg)', borderColor: 'var(--border-color)', color: 'var(--accent)' }}>
-                              Journal Entry
-                            </span>
-                          </div>
-                          <p className="text-sm font-bold font-theme-heading group-hover:opacity-90">
-                            {entry.title || 'Untitled Entry'}
-                          </p>
-                        </div>
+                  {/* Conditional Content: If entries exist, show them and the notice. If none, redirect or show empty state */}
+                  {selectedDayData?.entries.length > 0 ? (
+                    <div className="space-y-4">
+                      {/* Notice Banner */}
+                      <div className="p-3 rounded-2xl border flex items-center gap-2.5 text-xs font-medium" style={{ backgroundColor: 'var(--bg-primary)', borderColor: 'var(--border-color)', color: 'var(--accent)' }}>
+                        <CheckCircleIcon className="h-4 w-4 shrink-0" />
+                        <span>You already have a journal entry for this date.</span>
+                      </div>
 
-                        <div className="flex items-center gap-2 shrink-0">
-                          <span className="text-xs font-semibold flex items-center gap-1" style={{ color: 'var(--accent)' }}>
-                            <span>Read</span>
-                            <ArrowRightIcon className="h-3.5 w-3.5" />
-                          </span>
-                        </div>
+                      {/* Entries List */}
+                      <div className="space-y-3 max-h-[50vh] overflow-y-auto pr-1">
+                        {selectedDayData.entries.map((entry, idx) => (
+                          <Link 
+                            key={entry.id || idx}
+                            href={`/journal/entries/${entry.id}`}
+                            onClick={() => setIsDayModalOpen(false)}
+                            className="p-4 rounded-2xl border flex items-center justify-between gap-4 transition-all hover:scale-[1.01] group cursor-pointer"
+                            style={{ backgroundColor: 'var(--bg-primary)', borderColor: 'var(--border-color)' }}
+                          >
+                            <div className="space-y-1">
+                              <p className="text-sm font-bold font-theme-heading group-hover:opacity-90">
+                                {entry.title || 'Untitled Entry'}
+                              </p>
+                            </div>
+
+                            <div className="flex items-center gap-2 shrink-0">
+                              <span className="text-xs font-semibold flex items-center gap-1" style={{ color: 'var(--accent)' }}>
+                                <span>Read</span>
+                                <ArrowRightIcon className="h-3.5 w-3.5" />
+                              </span>
+                            </div>
+                          </Link>
+                        ))}
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="text-center py-6 space-y-4">
+                      <p className="text-sm opacity-80">No journal entry exists for this date yet.</p>
+                      <Link
+                        href={`/journal/new?date=${selectedDayData?.dateStr}`}
+                        onClick={() => setIsDayModalOpen(false)}
+                        className="inline-block px-5 py-2.5 rounded-xl text-xs font-bold transition-all shadow-md cursor-pointer hover:opacity-90"
+                        style={{ backgroundColor: 'var(--accent)', color: 'var(--bg-primary)' }}
+                      >
+                        Create Entry for {selectedDayData?.dateStr}
                       </Link>
-                    ))}
-                  </div>
+                    </div>
+                  )}
 
                   {/* Footer */}
-                  <div className="pt-2 border-t flex flex-col sm:flex-row items-center justify-between gap-3" style={{ borderColor: 'var(--border-color)' }}>
-                    <Link
-                      href={`/journal/new?date=${selectedDayData?.dateStr}`}
-                      onClick={() => setIsDayModalOpen(false)}
-                      className="w-full sm:w-auto px-4 py-2.5 rounded-xl text-xs font-bold border transition-all shadow-sm hover:opacity-90 flex items-center justify-center gap-1.5"
-                      style={{ backgroundColor: 'var(--bg-primary)', borderColor: 'var(--border-color)', color: 'var(--accent)' }}
-                    >
-                      <span>+ Add Another Entry for this Date</span>
-                    </Link>
-
+                  <div className="pt-2 border-t flex items-center justify-end" style={{ borderColor: 'var(--border-color)' }}>
                     <button
                       onClick={() => setIsDayModalOpen(false)}
-                      className="w-full sm:w-auto px-5 py-2.5 rounded-xl text-xs font-bold transition-all shadow-md cursor-pointer hover:opacity-90"
-                      style={{ backgroundColor: 'var(--accent)', color: 'var(--bg-primary)' }}
+                      className="px-5 py-2 rounded-xl text-xs font-bold transition-all border cursor-pointer hover:opacity-90"
+                      style={{ backgroundColor: 'var(--bg-primary)', borderColor: 'var(--border-color)', color: 'var(--text-main)' }}
                     >
                       Close
                     </button>
