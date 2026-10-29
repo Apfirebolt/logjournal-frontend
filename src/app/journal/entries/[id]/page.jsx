@@ -41,6 +41,33 @@ export default function EntryDetailPage() {
     }
   }, [entryId, fetchEntryById]);
 
+  // Helper to check if Editor.js JSON data has actual content
+  const hasContent = (input) => {
+    if (!input) return false;
+    try {
+      const blocks = typeof input === 'string' ? JSON.parse(input) : input;
+      if (!Array.isArray(blocks) || blocks.length === 0) return false;
+      
+      return blocks.some(block => {
+        if (block.type === 'paragraph' || block.type === 'header' || block.type === 'quote' || block.type === 'marker') {
+          return block.data?.text && block.data.text.trim().length > 0;
+        }
+        if (block.type === 'list') {
+          return block.data?.items && block.data.items.length > 0;
+        }
+        if (block.type === 'code') {
+          return block.data?.code && block.data.code.trim().length > 0;
+        }
+        if (block.type === 'table') {
+          return block.data?.content && block.data.content.length > 0;
+        }
+        return true;
+      });
+    } catch (e) {
+      return typeof input === 'string' && input.trim().length > 0 && input.trim() !== '[]';
+    }
+  };
+
   // Helper to safely render Editor.js JSON blocks into Medium-style typography
   const renderEditorBlocks = (input) => {
     if (!input) return null;
@@ -299,7 +326,7 @@ export default function EntryDetailPage() {
           <article className="space-y-8" data-aos="fade-up" data-aos-delay="100">
             
             {/* Highlights Card Container */}
-            {currentEntry.highlights && (
+            {hasContent(currentEntry.highlights) && (
               <div 
                 className="p-6 sm:p-8 rounded-3xl border shadow-sm space-y-4"
                 style={{ backgroundColor: 'var(--card-bg)', borderColor: 'var(--border-color)' }}
@@ -315,7 +342,7 @@ export default function EntryDetailPage() {
             )}
 
             {/* Gratitude Card Container */}
-            {currentEntry.gratitude && (
+            {hasContent(currentEntry.gratitude) && (
               <div 
                 className="p-6 sm:p-8 rounded-3xl border shadow-sm space-y-4"
                 style={{ backgroundColor: 'var(--card-bg)', borderColor: 'var(--border-color)' }}
@@ -331,7 +358,7 @@ export default function EntryDetailPage() {
             )}
 
             {/* Reflection Card Container */}
-            {currentEntry.better_day_thoughts && (
+            {hasContent(currentEntry.better_day_thoughts) && (
               <div 
                 className="p-6 sm:p-8 rounded-3xl border shadow-sm space-y-4"
                 style={{ backgroundColor: 'var(--card-bg)', borderColor: 'var(--border-color)' }}
@@ -379,46 +406,58 @@ export default function EntryDetailPage() {
               </div>
             )}
 
-            {/* Custom Category & Pillar Sections */}
+            {/* Custom Category & Pillar Sections (Only show if section has content or rating) */}
             {currentEntry.category_sections && currentEntry.category_sections.length > 0 && (
-              <div className="space-y-6 pt-4 border-t" style={{ borderColor: 'var(--border-color)' }}>
-                <h3 className="text-2xl font-bold font-theme-heading">Category & Pillar Insights</h3>
-                
-                <div className="space-y-6">
-                  {currentEntry.category_sections.map((section, idx) => (
-                    <div 
-                      key={section.id || idx}
-                      className="p-6 sm:p-8 rounded-3xl border shadow-sm space-y-5"
-                      style={{ backgroundColor: 'var(--card-bg)', borderColor: 'var(--border-color)' }}
-                    >
-                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b pb-4" style={{ borderColor: 'var(--border-color)' }}>
-                        <div className="flex items-center gap-2.5">
-                          <TagIcon className="h-5 w-5" style={{ color: 'var(--accent)' }} />
-                          <h4 className="text-lg font-bold font-theme-heading uppercase tracking-wider">{section.category_name || 'Pillar'}</h4>
-                        </div>
+              (() => {
+                const validSections = currentEntry.category_sections.filter(
+                  sec => hasContent(sec.content) || (sec.rating_score !== null && sec.rating_score !== undefined)
+                );
 
-                        {section.rating_score !== null && section.rating_score !== undefined && (
-                          <div className="flex items-center gap-2">
-                            <span className="font-bold uppercase tracking-wider opacity-60">Section Rating:</span>
-                            <div className="flex items-center gap-1">
-                              {[1, 2, 3, 4, 5].map((star) => (
-                                <StarIcon 
-                                  key={star}
-                                  className={`h-4 w-4 ${section.rating_score >= star ? 'text-amber-400 fill-amber-400' : 'opacity-20'}`}
-                                />
-                              ))}
+                if (validSections.length === 0) return null;
+
+                return (
+                  <div className="space-y-6 pt-4 border-t" style={{ borderColor: 'var(--border-color)' }}>
+                    <h3 className="text-2xl font-bold font-theme-heading">Category & Pillar Insights</h3>
+                    
+                    <div className="space-y-6">
+                      {validSections.map((section, idx) => (
+                        <div 
+                          key={section.id || idx}
+                          className="p-6 sm:p-8 rounded-3xl border shadow-sm space-y-5"
+                          style={{ backgroundColor: 'var(--card-bg)', borderColor: 'var(--border-color)' }}
+                        >
+                          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b pb-4" style={{ borderColor: 'var(--border-color)' }}>
+                            <div className="flex items-center gap-2.5">
+                              <TagIcon className="h-5 w-5" style={{ color: 'var(--accent)' }} />
+                              <h4 className="text-lg font-bold font-theme-heading uppercase tracking-wider">{section.category_name || 'Pillar'}</h4>
                             </div>
-                          </div>
-                        )}
-                      </div>
 
-                      <div className="prose prose-lg max-w-none pt-1">
-                        {renderEditorBlocks(section.content)}
-                      </div>
+                            {section.rating_score !== null && section.rating_score !== undefined && (
+                              <div className="flex items-center gap-2">
+                                <span className="font-bold uppercase tracking-wider opacity-60">Section Rating:</span>
+                                <div className="flex items-center gap-1">
+                                  {[1, 2, 3, 4, 5].map((star) => (
+                                    <StarIcon 
+                                      key={star}
+                                      className={`h-4 w-4 ${section.rating_score >= star ? 'text-amber-400 fill-amber-400' : 'opacity-20'}`}
+                                    />
+                                  ))}
+                                </div>
+                              </div>
+                            )}
+                          </div>
+
+                          {hasContent(section.content) && (
+                            <div className="prose prose-lg max-w-none pt-1">
+                              {renderEditorBlocks(section.content)}
+                            </div>
+                          )}
+                        </div>
+                      ))}
                     </div>
-                  ))}
-                </div>
-              </div>
+                  </div>
+                );
+              })()
             )}
 
           </article>

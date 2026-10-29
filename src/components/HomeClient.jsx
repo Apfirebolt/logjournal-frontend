@@ -23,11 +23,11 @@ const sliderImages = [
   {
     url: "https://images.unsplash.com/photo-1517842645767-c639042777db?auto=format&fit=crop&w=2070&q=80",
     title: "Mindful Daily Reflections",
-    subtitle: "Capture your thoughts with a warm cup of coffee and quiet focus."
+    subtitle: "Capture your thoughts of the day."
   },
   {
     url: "https://images.unsplash.com/photo-1455390582262-044cdead277a?auto=format&fit=crop&w=2075&q=80",
-    title: "Structured Writing & Pillars",
+    title: " Categorized and Structured Writing",
     subtitle: "Organize your days across custom categories and habit tracking."
   },
   {

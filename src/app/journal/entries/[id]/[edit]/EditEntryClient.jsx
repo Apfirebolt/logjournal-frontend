@@ -330,7 +330,7 @@ export default function EditEntryClient({ entryId }) {
 
                 <label className="inline-flex items-center gap-2 px-3 py-2 rounded-xl border font-medium cursor-pointer transition-colors" style={{ backgroundColor: 'var(--bg-primary)', borderColor: 'var(--border-color)' }}>
                   <input type="checkbox" checked={visibleSections.categories} onChange={() => toggleSection('categories')} className="rounded accent-[var(--accent)]" />
-                  <span>Pillars / Categories</span>
+                  <span>Custom Categories</span>
                 </label>
               </div>
             </div>

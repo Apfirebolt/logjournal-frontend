@@ -49,13 +49,13 @@ export default function CategoriesClient() {
           {/* Page Header */}
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b pb-6" style={{ borderColor: 'var(--border-color)' }}>
             <div>
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold mb-2" style={{ backgroundColor: 'var(--card-bg)', color: 'var(--accent)', border: '1px solid var(--border-color)' }}>
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-sm font-semibold mb-2" style={{ backgroundColor: 'var(--card-bg)', color: 'var(--accent)', border: '1px solid var(--border-color)' }}>
                 <TagIcon className="h-3.5 w-3.5" />
-                <span>Pillars & Tags</span>
+                <span>Customize Your Journal</span>
               </div>
               <h1 className="text-3xl font-bold font-theme-heading tracking-tight">Journal Categories</h1>
               <p className="text-sm opacity-80 mt-1" style={{ color: 'var(--text-muted)' }}>
-                Organize your reflections with default system categories or create custom tags.
+                Organize your journal with default system categories or create custom categories.
               </p>
             </div>
 
@@ -65,8 +65,8 @@ export default function CategoriesClient() {
                 type="text"
                 value={newCategoryName}
                 onChange={(e) => setNewCategoryName(e.target.value)}
-                placeholder="e.g., Mindfulness, Coding..."
-                className="px-4 py-2.5 rounded-xl border text-sm focus:outline-none shadow-inner w-full md:w-64"
+                placeholder="e.g., Yoga, Coding..."
+                className="px-4 py-2.5 rounded-xl border focus:outline-none shadow-inner w-full md:w-64"
                 style={{
                   backgroundColor: 'var(--card-bg)',
                   borderColor: 'var(--border-color)',
@@ -76,7 +76,7 @@ export default function CategoriesClient() {
               <button
                 type="submit"
                 disabled={submitting}
-                className="px-5 py-2.5 rounded-xl text-sm font-semibold flex items-center gap-2 transition-all shadow-md shrink-0 hover:opacity-90 disabled:opacity-50"
+                className="px-5 py-2.5 rounded-xl font-semibold flex items-center gap-2 transition-all shadow-md shrink-0 hover:opacity-90 disabled:opacity-50"
                 style={{ backgroundColor: 'var(--accent)', color: 'var(--bg-primary)' }}
               >
                 <PlusIcon className="h-4 w-4" />
@@ -119,7 +119,7 @@ export default function CategoriesClient() {
 
                   <div>
                     <h3 className="text-lg font-bold font-theme-heading">{cat.name}</h3>
-                    <p className="text-xs opacity-75 mt-1" style={{ color: 'var(--text-muted)' }}>
+                    <p className="opacity-75 mt-1" style={{ color: 'var(--text-muted)' }}>
                       {cat.is_default ? 'Standard journaling reflection pillar.' : 'User-created custom reflection category.'}
                     </p>
                   </div>

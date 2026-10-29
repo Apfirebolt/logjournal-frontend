@@ -357,7 +357,7 @@ export default function NewEntryClient() {
                     onChange={() => toggleSection('categories')} 
                     className="rounded accent-[var(--accent)]"
                   />
-                  <span>Pillars / Categories</span>
+                  <span>Custom Categories</span>
                 </label>
               </div>
             </div>

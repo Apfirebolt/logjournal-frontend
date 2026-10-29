@@ -3,7 +3,7 @@ import CategoriesClient from './CategoryClient';
 
 export const metadata = {
   title: 'Journal Categories | Softgenie Journal',
-  description: 'Manage your standard reflection pillars and custom tags.',
+  description: 'Manage your journal entries through custom categories and tags.',
 };
 
 export default function CategoriesPage() {
