@@ -125,11 +125,11 @@ const Header = () => {
               <>
                 <li>
                   <Link 
-                    href="/" 
+                    href="/dashboard" 
                     className={`px-4 py-2 rounded-xl font-medium flex items-center space-x-2 transition-all whitespace-nowrap ${
-                      pathname === '/' ? 'shadow-sm' : 'opacity-80 hover:opacity-100 hover:bg-black/5 dark:hover:bg-white/5'
+                      pathname === '/dashboard' ? 'shadow-sm' : 'opacity-80 hover:opacity-100 hover:bg-black/5 dark:hover:bg-white/5'
                     }`}
-                    style={pathname === '/' ? { backgroundColor: 'var(--accent)', color: 'var(--bg-primary)' } : { color: 'var(--text-main)' }}
+                    style={pathname === '/dashboard' ? { backgroundColor: 'var(--accent)', color: 'var(--bg-primary)' } : { color: 'var(--text-main)' }}
                   >
                     <HomeIcon className="h-4 w-4" />
                     <span>Dashboard</span>
@@ -373,9 +373,9 @@ const Header = () => {
           )}
 
           <Link
-            href="/"
+            href="/dashboard"
             className="flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-colors"
-            style={pathname === '/' ? { backgroundColor: 'var(--accent)', color: 'var(--bg-primary)' } : { color: 'var(--text-main)' }}
+            style={pathname === '/dashboard' ? { backgroundColor: 'var(--accent)', color: 'var(--bg-primary)' } : { color: 'var(--text-main)' }}
           >
             <HomeIcon className="h-5 w-5" />
             <span>Dashboard</span>

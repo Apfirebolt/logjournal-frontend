@@ -1,7 +1,6 @@
 import { create } from 'zustand';
 import httpClient from '@/lib/api';
 import Cookie from 'js-cookie';
-import axios from 'axios';
 
 // Helper to get authorization headers from cookies
 const getAuthHeaders = () => {
