@@ -214,7 +214,7 @@ export default function LoginPage() {
                   }}
                 >
                   <span>
-                    {loading ? "Signing in..." : "Sign in to LogJournal"}
+                    {loading ? "Signing in..." : "Sign in to Softgenie Journal"}
                   </span>
                   <ArrowRightIcon className="h-4 w-4" />
                 </button>

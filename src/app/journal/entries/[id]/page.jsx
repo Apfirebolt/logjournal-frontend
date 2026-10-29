@@ -311,7 +311,7 @@ export default function EntryDetailPage() {
         <div className="min-h-screen flex flex-col font-theme-body" style={{ backgroundColor: 'var(--bg-primary)', color: 'var(--text-main)' }}>
           <Header />
           <main className="flex-grow flex items-center justify-center">
-            <p className="text-sm font-bold animate-pulse opacity-60">Loading story...</p>
+            <p className="text-sm font-bold animate-pulse opacity-60">Loading journal entry...</p>
           </main>
           <Footer />
         </div>
