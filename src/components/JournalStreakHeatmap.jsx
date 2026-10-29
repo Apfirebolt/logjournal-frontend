@@ -98,7 +98,7 @@ export default function JournalStreakHeatmap({ entries = [] }) {
         <div>
           <h3 className="text-xl font-bold font-theme-heading tracking-tight">Journaling Activity & Streaks</h3>
           <p className="text-xs opacity-75 mt-1" style={{ color: 'var(--text-muted)' }}>
-            Your consistency over the past 6 months. Every reflection counts.
+            Your consistency over the past 6 months.
           </p>
         </div>
 

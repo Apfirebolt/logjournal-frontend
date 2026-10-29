@@ -68,6 +68,92 @@ export default function EntryDetailPage() {
     }
   };
 
+  const calculateReadingStats = (entry) => {
+  if (!entry) return { totalText: "", wordCount: 0, readTimeMinutes: 1 };
+
+  let collectedTexts = [];
+
+  // 1. Add Title
+  if (entry.title) {
+    collectedTexts.push(entry.title);
+  }
+
+  // Helper to extract text recursively from Editor.js JSON blocks
+  const extractEditorText = (input) => {
+    if (!input) return;
+    try {
+      const blocks = typeof input === 'string' ? JSON.parse(input) : input;
+      if (!Array.isArray(blocks)) return;
+
+      blocks.forEach((block) => {
+        if (block.type === 'paragraph' || block.type === 'header' || block.type === 'quote' || block.type === 'marker') {
+          if (block.data?.text) {
+            // Strip HTML tags if any are present
+            const cleanText = block.data.text.replace(/<[^>]*>?/gm, '');
+            collectedTexts.push(cleanText);
+          }
+        } else if (block.type === 'list' && Array.isArray(block.data?.items)) {
+          block.data.items.forEach((item) => {
+            const itemText = typeof item === 'string' ? item : item.content;
+            if (itemText) {
+              collectedTexts.push(itemText.replace(/<[^>]*>?/gm, ''));
+            }
+          });
+        } else if (block.type === 'table' && Array.isArray(block.data?.content)) {
+          block.data.content.forEach((row) => {
+            if (Array.isArray(row)) {
+              row.forEach((cell) => {
+                if (cell) collectedTexts.push(String(cell));
+              });
+            }
+          });
+        }
+      });
+    } catch (e) {
+      if (typeof input === 'string' && input !== '[]') {
+        collectedTexts.push(input);
+      }
+    }
+  };
+
+  // 2. Extract from primary rich text sections
+  extractEditorText(entry.highlights);
+  extractEditorText(entry.gratitude);
+  extractEditorText(entry.better_day_thoughts);
+
+  // 3. Extract from Habits / Tasks checklist
+  if (Array.isArray(entry.habits)) {
+    entry.habits.forEach((habit) => {
+      if (habit.task_name) collectedTexts.push(habit.task_name);
+    });
+  }
+
+  // 4. Extract from Category / Pillar sections
+  if (Array.isArray(entry.category_sections)) {
+    entry.category_sections.forEach((section) => {
+      if (section.category_name) collectedTexts.push(section.category_name);
+      extractEditorText(section.content);
+    });
+  }
+
+  // Combine everything into a single string
+  const totalText = collectedTexts.join(' ');
+  
+  // Calculate word count (splitting by whitespace)
+  const words = totalText.trim().split(/\s+/).filter(Boolean);
+  const wordCount = words.length;
+
+  // Estimate read time (assuming 200 words per minute, minimum 1 minute)
+  const wordsPerMinute = 200;
+  const readTimeMinutes = Math.max(1, Math.ceil(wordCount / wordsPerMinute));
+
+  return {
+    totalText,
+    wordCount,
+    readTimeMinutes,
+  };
+}
+
   // Helper to safely render Editor.js JSON blocks into Medium-style typography
   const renderEditorBlocks = (input) => {
     if (!input) return null;
@@ -303,7 +389,7 @@ export default function EntryDetailPage() {
 
           {/* Article Header */}
           <header className="space-y-6 border-b pb-8" style={{ borderColor: 'var(--border-color)' }} data-aos="fade-up">
-            <h1 className="text-3xl sm:text-5xl font-extrabold font-theme-heading tracking-tight leading-tight" style={{ color: 'var(--text-main)' }}>
+            <h1 className="text-3xl sm:text-4xl font-extrabold font-theme-heading tracking-tight leading-tight" style={{ color: 'var(--text-main)' }}>
               {currentEntry.title}
             </h1>
 
@@ -317,7 +403,7 @@ export default function EntryDetailPage() {
 
               <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border" style={{ backgroundColor: 'var(--card-bg)', borderColor: 'var(--border-color)' }}>
                 <ClockIcon className="h-3.5 w-3.5" style={{ color: 'var(--accent)' }} />
-                <span>3 min read</span>
+                <span>{calculateReadingStats(currentEntry).readTimeMinutes} min read</span>
               </div>
             </div>
           </header>

@@ -57,6 +57,18 @@ export default function JournalCalendar({ entries = [], onSelectDate }) {
     entryMap[dateStr].push(entry);
   });
 
+  // Calculate days entries were written vs days missed for the currently active month
+  let daysWithEntriesCount = 0;
+  for (let day = 1; day <= daysInMonth; day++) {
+    const formattedMonth = String(month + 1).padStart(2, '0');
+    const formattedDay = String(day).padStart(2, '0');
+    const dateKey = `${year}-${formattedMonth}-${formattedDay}`;
+    if (entryMap[dateKey] && entryMap[dateKey].length > 0) {
+      daysWithEntriesCount++;
+    }
+  }
+  const daysMissed = daysInMonth - daysWithEntriesCount;
+
   // Handle cell click
   const handleCellClick = (dateKey, dayEntries) => {
     if (dayEntries.length > 0) {
@@ -213,6 +225,10 @@ export default function JournalCalendar({ entries = [], onSelectDate }) {
             <h2 className="text-xl sm:text-2xl font-extrabold font-theme-heading tracking-tight" style={{ color: 'var(--text-main)' }}>
               {MONTH_NAMES[month]} <span style={{ color: 'var(--accent)' }}>{year}</span>
             </h2>
+            {/* Display number of days missed and days for which entries exist */}
+            <p className="text-sm opacity-75">
+              {`Days missed: ${daysMissed} | Entries: ${daysWithEntriesCount}`}
+            </p>
           </div>
         </div>
 
@@ -375,6 +391,7 @@ export default function JournalCalendar({ entries = [], onSelectDate }) {
             </div>
           </div>
         </Dialog>
+
       </Transition>
 
     </div>

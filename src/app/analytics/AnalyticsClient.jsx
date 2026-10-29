@@ -31,11 +31,11 @@ export default function AnalyticsClient() {
           <div className="border-b pb-6" style={{ borderColor: 'var(--border-color)' }}>
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold mb-2" style={{ backgroundColor: 'var(--card-bg)', color: 'var(--accent)', border: '1px solid var(--border-color)' }}>
               <ChartBarIcon className="h-3.5 w-3.5" />
-              <span>Metrics & Growth</span>
+              <span>Journal Metrics</span>
             </div>
             <h1 className="text-3xl font-bold font-theme-heading tracking-tight">Journal Analytics</h1>
             <p className="text-sm opacity-80 mt-1" style={{ color: 'var(--text-muted)' }}>
-              Track your journaling streaks, consistency habits, and life pillar balances.
+              Track your journaling streaks, consistency habits, and work life balance.
             </p>
           </div>
 

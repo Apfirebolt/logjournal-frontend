@@ -268,7 +268,7 @@ export default function JournalAnalyticsCharts({ entries = [], categories = [] }
               </div>
               <div>
                 <h3 className="text-lg font-bold font-theme-heading">Life Balance Radar</h3>
-                <p className="text-xs opacity-75" style={{ color: 'var(--text-muted)' }}>Average scores across journaling pillars (1-5)</p>
+                <p className="text-xs opacity-75" style={{ color: 'var(--text-muted)' }}>Average scores across journaling categories (1-5)</p>
               </div>
             </div>
           </div>
