@@ -14,10 +14,10 @@ const Footer = () => {
       }}
     >
       <div className="container mx-auto px-6 pt-12 pb-8 max-w-7xl">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-12">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-10 mb-12">
           
           {/* Brand & Description */}
-          <div className="md:col-span-1 space-y-4">
+          <div className="space-y-4">
             <Link href="/" className="inline-flex items-center gap-2 group">
               <div 
                 className="p-1.5 rounded-lg transition-transform group-hover:scale-105"
@@ -29,7 +29,7 @@ const Footer = () => {
                 Softgenie <span style={{ color: 'var(--accent)' }}> Journal</span>
               </span>
             </Link>
-            <p className="text-sm leading-relaxed font-theme-body opacity-80" style={{ color: 'var(--text-muted)' }}>
+            <p className="text-sm leading-relaxed font-theme-body opacity-80 max-w-sm" style={{ color: 'var(--text-muted)' }}>
               A flexible daily journaling and self-reflection platform with custom categories, block-based prompts, and category ratings.
             </p>
           </div>
@@ -66,7 +66,7 @@ const Footer = () => {
           {/* System & Analytics Links */}
           <div className="space-y-3 font-theme-body">
             <h3 className="text-xs font-bold uppercase tracking-widest opacity-60" style={{ color: 'var(--text-main)' }}>
-              Insights
+              Insights & Source
             </h3>
             <ul className="space-y-2 text-sm">
               <li>
@@ -85,38 +85,6 @@ const Footer = () => {
                 </a>
               </li>
             </ul>
-          </div>
-
-          {/* Stay Updated / Newsletter */}
-          <div className="space-y-3 font-theme-body">
-            <h3 className="text-xs font-bold uppercase tracking-widest opacity-60" style={{ color: 'var(--text-main)' }}>
-              Stay Mindful
-            </h3>
-            <p className="text-sm opacity-80" style={{ color: 'var(--text-muted)' }}>
-              Get weekly reflection prompts and journaling insights delivered to your inbox.
-            </p>
-            <form onSubmit={(e) => e.preventDefault()} className="flex gap-2">
-              <input
-                type="email"
-                placeholder="Enter your email"
-                className="w-full px-3 py-2 text-sm rounded-xl border focus:outline-none transition-colors"
-                style={{
-                  backgroundColor: 'var(--card-bg)',
-                  borderColor: 'var(--border-color)',
-                  color: 'var(--text-main)',
-                }}
-              />
-              <button
-                type="submit"
-                className="px-4 py-2 text-sm font-semibold rounded-xl transition-all shadow-sm hover:opacity-90"
-                style={{
-                  backgroundColor: 'var(--accent)',
-                  color: 'var(--bg-primary)',
-                }}
-              >
-                Join
-              </button>
-            </form>
           </div>
 
         </div>

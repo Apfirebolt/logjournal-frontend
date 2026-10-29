@@ -238,7 +238,7 @@ export default function HomeClient() {
                   Custom Categories
                 </h3>
                 <p className="text-sm leading-relaxed opacity-80" style={{ color: 'var(--text-muted)' }}>
-                  Track default system pillars like Work, Health, and Family, or add custom tags like Friends or Hobbies with individual scores.
+                  Track default system generated journal sections like Work, Health, and Family, or add custom tags like Friends or Hobbies with individual scores.
                 </p>
               </div>
 

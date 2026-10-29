@@ -286,7 +286,7 @@ export default function JournalEntriesPage() {
                                 style={{ backgroundColor: 'var(--bg-primary)', borderColor: 'var(--border-color)', color: 'var(--accent)' }}
                               >
                                 <TagIcon className="h-3.5 w-3.5" />
-                                <span>{sec.category_name || 'Pillar'}</span>
+                                <span>{sec.category_name || 'Category'}</span>
                               </span>
                             ))}
                           </div>
