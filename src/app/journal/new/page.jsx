@@ -3,7 +3,7 @@ import NewEntryClient from './NewEntryClient';
 
 export const metadata = {
   title: 'New Journal Entry | Softgenie Journal',
-  description: 'Create a new daily reflection and track your category ratings.',
+  description: 'Create a new daily experience and track your category ratings.',
 };
 
 export default function NewEntryPage() {

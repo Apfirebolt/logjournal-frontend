@@ -22,8 +22,8 @@ import 'aos/dist/aos.css';
 const sliderImages = [
   {
     url: "https://images.unsplash.com/photo-1517842645767-c639042777db?auto=format&fit=crop&w=2070&q=80",
-    title: "Mindful Daily Reflections",
-    subtitle: "Capture your thoughts of the day."
+    title: "Mindful Daily Introspection",
+    subtitle: "Write and reflect on your daily experiences."
   },
   {
     url: "https://images.unsplash.com/photo-1455390582262-044cdead277a?auto=format&fit=crop&w=2075&q=80",
@@ -211,7 +211,7 @@ export default function HomeClient() {
           <div className="max-w-7xl mx-auto space-y-16">
             <div className="text-center space-y-4" data-aos="fade-up">
               <h2 className="text-3xl sm:text-4xl font-bold font-theme-heading">
-                Designed for Daily Reflection
+                Designed for maintaining a log of your daily experiences
               </h2>
               <p className="max-w-xl mx-auto opacity-80" style={{ color: 'var(--text-muted)' }}>
                 Everything you need to maintain a consistent journaling habit, tailored to your personal categories.
@@ -258,7 +258,7 @@ export default function HomeClient() {
                   <LightBulbIcon className="h-6 w-6" />
                 </div>
                 <h3 className="text-xl font-bold font-theme-heading">
-                  Medium-Style Editor
+                  Rich Text Editor
                 </h3>
                 <p className="text-sm leading-relaxed opacity-80" style={{ color: 'var(--text-muted)' }}>
                   Express yourself cleanly using block-based rich text, multi-level headers, tables, quotes, and code snippets.

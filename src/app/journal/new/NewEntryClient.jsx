@@ -114,7 +114,7 @@ export default function NewEntryClient() {
       if (visibleSections.highlights && highlightsEditorRef.current && !editorInstanceRef.current.highlights) {
         editorInstanceRef.current.highlights = new EditorJS({
           holder: highlightsEditorRef.current,
-          placeholder: 'Tell your story... What were your main highlights today?',
+          placeholder: 'How was your day today?... What were your main highlights today?',
           tools: editorTools,
         });
       }
@@ -142,7 +142,7 @@ export default function NewEntryClient() {
             if (holderElement && !editorInstanceRef.current.categories[cat.id]) {
               editorInstanceRef.current.categories[cat.id] = new EditorJS({
                 holder: holderElement,
-                placeholder: `Record notes, activities, or reflections for ${cat.name}...`,
+                placeholder: `Record notes, activities, or experiences for ${cat.name}...`,
                 tools: editorTools,
               });
             }
@@ -298,12 +298,12 @@ export default function NewEntryClient() {
 
                 <label className="inline-flex items-center gap-2 px-3 py-2 rounded-xl border font-medium cursor-pointer transition-colors" style={{ backgroundColor: 'var(--bg-primary)', borderColor: 'var(--border-color)' }}>
                   <input type="checkbox" checked={visibleSections.gratitude} onChange={() => toggleSection('gratitude')} className="rounded accent-[var(--accent)]" />
-                  <span>Gratitude</span>
+                  <span>Grateful For</span>
                 </label>
 
                 <label className="inline-flex items-center gap-2 px-3 py-2 rounded-xl border font-medium cursor-pointer transition-colors" style={{ backgroundColor: 'var(--bg-primary)', borderColor: 'var(--border-color)' }}>
                   <input type="checkbox" checked={visibleSections.thoughts} onChange={() => toggleSection('thoughts')} className="rounded accent-[var(--accent)]" />
-                  <span>Reflection</span>
+                  <span>Improvement</span>
                 </label>
 
                 <label className="inline-flex items-center gap-2 px-3 py-2 rounded-xl border font-medium cursor-pointer transition-colors" style={{ backgroundColor: 'var(--bg-primary)', borderColor: 'var(--border-color)' }}>
@@ -343,7 +343,7 @@ export default function NewEntryClient() {
                 type="text"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
-                placeholder="e.g., Reflections on System Architecture & Life"
+                placeholder="e.g., Amazing day at work"
                 className="w-full px-4 py-3.5 rounded-2xl border text-lg focus:outline-none shadow-inner font-theme-heading"
                 style={{ backgroundColor: 'var(--card-bg)', borderColor: 'var(--border-color)', color: 'var(--text-main)' }}
                 required

@@ -70,7 +70,7 @@ const Footer = () => {
             </h3>
             <ul className="space-y-2 text-sm">
               <li>
-                <Link href="/journal/analytics" className="transition-opacity opacity-80 hover:opacity-100">
+                <Link href="/analytics" className="transition-opacity opacity-80 hover:opacity-100">
                   Rating Analytics
                 </Link>
               </li>

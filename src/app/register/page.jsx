@@ -106,13 +106,13 @@ export default function RegisterPage() {
                 <h1 className="text-2xl font-extrabold tracking-tight font-theme-heading">
                   Softgenie <span style={{ color: 'var(--accent)' }}>Journal</span>
                 </h1>
-                <p className="text-xs font-theme-body leading-relaxed text-center opacity-80" style={{ color: 'var(--text-muted)' }}>
-                  Create your account to start tracking your daily reflections and category growth.
+                <p className="font-theme-body leading-relaxed text-center opacity-80" style={{ color: 'var(--text-muted)' }}>
+                  Create your account to start tracking your daily experiences and category growth.
                 </p>
               </div>
 
               {(error || localError) && (
-                <div className="text-xs text-rose-500 bg-rose-500/10 border border-rose-500/20 p-3 rounded-xl font-medium">
+                <div className="text-rose-500 bg-rose-500/10 border border-rose-500/20 p-3 rounded-xl font-medium">
                   {localError || error}
                 </div>
               )}
@@ -151,7 +151,7 @@ export default function RegisterPage() {
                 <div className="space-y-1.5">
                   <label
                     htmlFor="username"
-                    className="block text-xs font-bold uppercase tracking-wider font-theme-heading opacity-80"
+                    className="block font-bold uppercase tracking-wider font-theme-heading opacity-80"
                     style={{ color: 'var(--text-main)' }}
                   >
                     Username
@@ -180,7 +180,7 @@ export default function RegisterPage() {
                 <div className="space-y-1.5">
                   <label
                     htmlFor="email"
-                    className="block text-xs font-bold uppercase tracking-wider font-theme-heading opacity-80"
+                    className="block font-bold uppercase tracking-wider font-theme-heading opacity-80"
                     style={{ color: 'var(--text-main)' }}
                   >
                     Email Address
@@ -209,7 +209,7 @@ export default function RegisterPage() {
                 <div className="space-y-1.5">
                   <label
                     htmlFor="password"
-                    className="block text-xs font-bold uppercase tracking-wider font-theme-heading opacity-80"
+                    className="block font-bold uppercase tracking-wider font-theme-heading opacity-80"
                     style={{ color: 'var(--text-main)' }}
                   >
                     Password
@@ -253,7 +253,7 @@ export default function RegisterPage() {
 
               {/* Footer Link */}
               <div
-                className="text-center text-xs font-theme-body pt-4 border-t opacity-80"
+                className="text-center font-theme-body pt-4 border-t opacity-80"
                 style={{ borderColor: 'var(--border-color)', color: 'var(--text-muted)' }}
                 data-aos="fade-in"
                 data-aos-delay="300"
@@ -284,7 +284,7 @@ export default function RegisterPage() {
                     <p className="text-sm italic font-theme-body text-gray-200">
                       "Fill your paper with the breathings of your heart."
                     </p>
-                    <footer className="text-xs opacity-75 font-theme-heading tracking-wide uppercase">
+                    <footer className="opacity-75 font-theme-heading tracking-wide uppercase">
                       — William Wordsworth
                     </footer>
                   </blockquote>

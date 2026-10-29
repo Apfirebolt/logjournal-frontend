@@ -29,7 +29,7 @@ export default function AnalyticsClient() {
           
           {/* Page Header */}
           <div className="border-b pb-6" style={{ borderColor: 'var(--border-color)' }}>
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold mb-2" style={{ backgroundColor: 'var(--card-bg)', color: 'var(--accent)', border: '1px solid var(--border-color)' }}>
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-sm font-semibold mb-2" style={{ backgroundColor: 'var(--card-bg)', color: 'var(--accent)', border: '1px solid var(--border-color)' }}>
               <ChartBarIcon className="h-3.5 w-3.5" />
               <span>Journal Metrics</span>
             </div>

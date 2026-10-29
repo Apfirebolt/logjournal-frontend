@@ -323,12 +323,12 @@ export default function EditEntryClient({ entryId }) {
 
                 <label className="inline-flex items-center gap-2 px-3 py-2 rounded-xl border font-medium cursor-pointer transition-colors" style={{ backgroundColor: 'var(--bg-primary)', borderColor: 'var(--border-color)' }}>
                   <input type="checkbox" checked={visibleSections.gratitude} onChange={() => toggleSection('gratitude')} className="rounded accent-[var(--accent)]" />
-                  <span>Gratitude</span>
+                  <span>Grateful For</span>
                 </label>
 
                 <label className="inline-flex items-center gap-2 px-3 py-2 rounded-xl border font-medium cursor-pointer transition-colors" style={{ backgroundColor: 'var(--bg-primary)', borderColor: 'var(--border-color)' }}>
                   <input type="checkbox" checked={visibleSections.thoughts} onChange={() => toggleSection('thoughts')} className="rounded accent-[var(--accent)]" />
-                  <span>Reflection</span>
+                  <span>Improvement</span>
                 </label>
 
                 <label className="inline-flex items-center gap-2 px-3 py-2 rounded-xl border font-medium cursor-pointer transition-colors" style={{ backgroundColor: 'var(--bg-primary)', borderColor: 'var(--border-color)' }}>

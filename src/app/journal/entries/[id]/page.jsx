@@ -388,7 +388,7 @@ export default function EntryDetailPage() {
                 {currentEntry.tags.map((tag, idx) => (
                   <span
                     key={idx}
-                    className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-bold border shadow-2xs"
+                    className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl text-sm font-bold border shadow-2xs"
                     style={{ backgroundColor: 'var(--card-bg)', borderColor: 'var(--border-color)', color: 'var(--accent)' }}
                   >
                     <TagIcon className="h-3.5 w-3.5" />

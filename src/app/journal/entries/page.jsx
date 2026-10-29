@@ -18,7 +18,8 @@ import {
   MagnifyingGlassIcon, 
   FunnelIcon,
   CheckCircleIcon,
-  TagIcon
+  TagIcon,
+  Squares2X2Icon
 } from '@heroicons/react/24/outline';
 import { toast } from 'react-toastify';
 import AOS from 'aos';
@@ -30,6 +31,9 @@ export default function JournalEntriesPage() {
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [entryToDelete, setEntryToDelete] = useState(null);
   const [isDeleting, setIsDeleting] = useState(false);
+
+  // View Mode Toggle state: 'both' | 'calendar' | 'grid'
+  const [viewMode, setViewMode] = useState('both');
 
   // Search and Sort states
   const [searchQuery, setSearchQuery] = useState('');
@@ -130,7 +134,7 @@ export default function JournalEntriesPage() {
             data-aos="fade-down"
           >
             <div>
-              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-semibold mb-3 shadow-sm" style={{ backgroundColor: 'var(--card-bg)', color: 'var(--accent)', border: '1px solid var(--border-color)' }}>
+              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full font-semibold mb-3 shadow-sm" style={{ backgroundColor: 'var(--card-bg)', color: 'var(--accent)', border: '1px solid var(--border-color)' }}>
                 <BookOpenIcon className="h-4 w-4" />
                 <span>Journal History</span>
               </div>
@@ -150,177 +154,253 @@ export default function JournalEntriesPage() {
             </Link>
           </div>
 
-          {/* Calendar View Section */}
-          <section className="space-y-4" data-aos="fade-up">
-            <h2 className="text-xl sm:text-2xl font-bold font-theme-heading">Writing Calendar</h2>
-            <JournalCalendar entries={entries} />
-          </section>
-
-          {/* Search and Sort Toolbar */}
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-4" data-aos="fade-up">
-            <div className="relative w-full sm:w-96">
-              <MagnifyingGlassIcon className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 opacity-50" style={{ color: 'var(--text-main)' }} />
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search entries by title or content..."
-                className="w-full pl-11 pr-4 py-3.5 rounded-2xl border text-sm focus:outline-none shadow-inner font-theme-body"
-                style={{ backgroundColor: 'var(--card-bg)', borderColor: 'var(--border-color)', color: 'var(--text-main)' }}
-              />
+          {/* View Mode Toggle Bar */}
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 p-2 rounded-2xl border" style={{ backgroundColor: 'var(--card-bg)', borderColor: 'var(--border-color)' }} data-aos="fade-up">
+            <div className="flex items-center gap-2 px-3">
+              <Squares2X2Icon className="h-5 w-5" style={{ color: 'var(--accent)' }} />
+              <span className="font-bold uppercase tracking-wider font-theme-heading">Display View</span>
             </div>
 
-            <div className="flex items-center gap-3 w-full sm:w-auto justify-end">
-              <FunnelIcon className="h-4 w-4 opacity-60" />
-              <span className="text-sm font-semibold opacity-80">Sort by:</span>
-              <select
-                value={sortBy}
-                onChange={(e) => setSortBy(e.target.value)}
-                className="px-4 py-3 rounded-xl border text-sm font-semibold focus:outline-none cursor-pointer"
-                style={{ backgroundColor: 'var(--card-bg)', borderColor: 'var(--border-color)', color: 'var(--text-main)' }}
+            <div className="flex items-center gap-1.5 w-full sm:w-auto">
+              <button
+                onClick={() => setViewMode('both')}
+                className={`flex-1 sm:flex-initial px-4 py-2 rounded-xl font-bold transition-all cursor-pointer ${
+                  viewMode === 'both' ? 'shadow-sm' : 'opacity-60 hover:opacity-100'
+                }`}
+                style={{
+                  backgroundColor: viewMode === 'both' ? 'var(--bg-primary)' : 'transparent',
+                  color: viewMode === 'both' ? 'var(--accent)' : 'var(--text-main)',
+                  border: viewMode === 'both' ? '1px solid var(--border-color)' : '1px solid transparent'
+                }}
               >
-                <option value="newest">Newest Date</option>
-                <option value="oldest">Oldest Date</option>
-                <option value="highest">Highest Rating</option>
-              </select>
+                Combined View
+              </button>
+
+              <button
+                onClick={() => setViewMode('calendar')}
+                className={`flex-1 sm:flex-initial px-4 py-2 rounded-xl font-bold transition-all cursor-pointer ${
+                  viewMode === 'calendar' ? 'shadow-sm' : 'opacity-60 hover:opacity-100'
+                }`}
+                style={{
+                  backgroundColor: viewMode === 'calendar' ? 'var(--bg-primary)' : 'transparent',
+                  color: viewMode === 'calendar' ? 'var(--accent)' : 'var(--text-main)',
+                  border: viewMode === 'calendar' ? '1px solid var(--border-color)' : '1px solid transparent'
+                }}
+              >
+                Calendar Only
+              </button>
+
+              <button
+                onClick={() => setViewMode('grid')}
+                className={`flex-1 sm:flex-initial px-4 py-2 rounded-xl font-bold transition-all cursor-pointer ${
+                  viewMode === 'grid' ? 'shadow-sm' : 'opacity-60 hover:opacity-100'
+                }`}
+                style={{
+                  backgroundColor: viewMode === 'grid' ? 'var(--bg-primary)' : 'transparent',
+                  color: viewMode === 'grid' ? 'var(--accent)' : 'var(--text-main)',
+                  border: viewMode === 'grid' ? '1px solid var(--border-color)' : '1px solid transparent'
+                }}
+              >
+                Grid List Only
+              </button>
             </div>
           </div>
 
-          {/* Entries Grid Section */}
-          <section className="space-y-6" data-aos="fade-up">
-            <div className="flex items-center justify-between">
-              <h2 className="text-xl sm:text-2xl font-bold font-theme-heading">
-                Entries ({filteredAndSortedEntries.length})
-              </h2>
-            </div>
+          {/* Calendar View Section (Shown when 'both' or 'calendar') */}
+          {(viewMode === 'both' || viewMode === 'calendar') && (
+            <section className="space-y-4" data-aos="fade-up">
+              <h2 className="text-xl sm:text-2xl font-bold font-theme-heading">Writing Calendar</h2>
+              <JournalCalendar entries={entries} />
+            </section>
+          )}
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {loading && entries.length === 0 ? (
-                <div className="col-span-full py-16 text-center">
-                  <p className="text-base font-semibold animate-pulse opacity-60">Loading your entries...</p>
+          {/* Grid List Section (Shown when 'both' or 'grid') */}
+          {(viewMode === 'both' || viewMode === 'grid') && (
+            <div className="space-y-8" data-aos="fade-up">
+              
+              {/* Search and Sort Toolbar */}
+              <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+                <div className="relative w-full sm:w-96">
+                  <MagnifyingGlassIcon className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 opacity-50" style={{ color: 'var(--text-main)' }} />
+                  <input
+                    type="text"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    placeholder="Search entries by title or content..."
+                    className="w-full pl-11 pr-4 py-3.5 rounded-2xl border text-sm focus:outline-none shadow-inner font-theme-body"
+                    style={{ backgroundColor: 'var(--card-bg)', borderColor: 'var(--border-color)', color: 'var(--text-main)' }}
+                  />
                 </div>
-              ) : entries.length === 0 ? (
-                <div className="col-span-full text-center py-20 px-6 space-y-4 border rounded-3xl shadow-sm" style={{ borderColor: 'var(--border-color)', backgroundColor: 'var(--card-bg)' }}>
-                  <div className="w-16 h-16 rounded-2xl mx-auto flex items-center justify-center border shadow-inner" style={{ backgroundColor: 'var(--bg-primary)', borderColor: 'var(--border-color)', color: 'var(--accent)' }}>
-                    <BookOpenIcon className="h-8 w-8" />
-                  </div>
-                  <h3 className="text-xl font-bold font-theme-heading">No journal entries yet</h3>
-                  <p className="text-sm opacity-75 max-w-md mx-auto leading-relaxed" style={{ color: 'var(--text-muted)' }}>
-                    Start your journaling journey today by recording your first daily milestone and reflection.
-                  </p>
-                  <Link
-                    href="/journal/new"
-                    className="inline-block px-6 py-3 rounded-xl text-sm font-semibold shadow-md transition-all hover:scale-105 mt-2"
-                    style={{ backgroundColor: 'var(--accent)', color: 'var(--bg-primary)' }}
+
+                <div className="flex items-center gap-3 w-full sm:w-auto justify-end">
+                  <FunnelIcon className="h-4 w-4 opacity-60" />
+                  <span className="text-sm font-semibold opacity-80">Sort by:</span>
+                  <select
+                    value={sortBy}
+                    onChange={(e) => setSortBy(e.target.value)}
+                    className="px-4 py-3 rounded-xl border text-sm font-semibold focus:outline-none cursor-pointer"
+                    style={{ backgroundColor: 'var(--card-bg)', borderColor: 'var(--border-color)', color: 'var(--text-main)' }}
                   >
-                    Create First Entry
-                  </Link>
+                    <option value="newest">Newest Date</option>
+                    <option value="oldest">Oldest Date</option>
+                    <option value="highest">Highest Rating</option>
+                  </select>
                 </div>
-              ) : filteredAndSortedEntries.length === 0 ? (
-                <div className="col-span-full text-center py-16 px-6 space-y-3 border rounded-3xl shadow-sm" style={{ borderColor: 'var(--border-color)', backgroundColor: 'var(--card-bg)' }}>
-                  <MagnifyingGlassIcon className="h-10 w-10 mx-auto opacity-30" style={{ color: 'var(--accent)' }} />
-                  <h3 className="text-lg font-bold font-theme-heading">No matching entries found</h3>
-                  <p className="text-sm opacity-75">Try adjusting your search query or clear the filter.</p>
-                  <button
-                    onClick={() => setSearchQuery('')}
-                    className="px-5 py-2.5 rounded-xl text-sm font-semibold border transition-all mt-2 cursor-pointer"
-                    style={{ borderColor: 'var(--border-color)', backgroundColor: 'var(--bg-primary)' }}
-                  >
-                    Clear Search
-                  </button>
+              </div>
+
+              {/* Entries Grid Section */}
+              <section className="space-y-6">
+                <div className="flex items-center justify-between">
+                  <h2 className="text-xl sm:text-2xl font-bold font-theme-heading">
+                    Entries ({filteredAndSortedEntries.length})
+                  </h2>
                 </div>
-              ) : (
-                filteredAndSortedEntries.map((entry) => {
-                  const displayDate = entry.journal_date || entry.created_at;
-                  
-                  // Compute average rating
-                  const avgRating = entry.category_sections?.length > 0 
-                    ? (entry.category_sections.reduce((acc, curr) => acc + (curr.rating_score || 0), 0) / entry.category_sections.length).toFixed(1)
-                    : null;
 
-                  // Habit completion stats
-                  const habits = entry.habits || [];
-                  const completedHabits = habits.filter((h) => h.is_completed).length;
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {loading && entries.length === 0 ? (
+                    <div className="col-span-full py-16 text-center">
+                      <p className="text-base font-semibold animate-pulse opacity-60">Loading your entries...</p>
+                    </div>
+                  ) : entries.length === 0 ? (
+                    <div className="col-span-full text-center py-20 px-6 space-y-4 border rounded-3xl shadow-sm" style={{ borderColor: 'var(--border-color)', backgroundColor: 'var(--card-bg)' }}>
+                      <div className="w-16 h-16 rounded-2xl mx-auto flex items-center justify-center border shadow-inner" style={{ backgroundColor: 'var(--bg-primary)', borderColor: 'var(--border-color)', color: 'var(--accent)' }}>
+                        <BookOpenIcon className="h-8 w-8" />
+                      </div>
+                      <h3 className="text-xl font-bold font-theme-heading">No journal entries yet</h3>
+                      <p className="text-sm opacity-75 max-w-md mx-auto leading-relaxed" style={{ color: 'var(--text-muted)' }}>
+                        Start your journaling journey today by recording your first daily milestone and experience.
+                      </p>
+                      <Link
+                        href="/journal/new"
+                        className="inline-block px-6 py-3 rounded-xl text-sm font-semibold shadow-md transition-all hover:scale-105 mt-2"
+                        style={{ backgroundColor: 'var(--accent)', color: 'var(--bg-primary)' }}
+                      >
+                        Create First Entry
+                      </Link>
+                    </div>
+                  ) : filteredAndSortedEntries.length === 0 ? (
+                    <div className="col-span-full text-center py-16 px-6 space-y-3 border rounded-3xl shadow-sm" style={{ borderColor: 'var(--border-color)', backgroundColor: 'var(--card-bg)' }}>
+                      <MagnifyingGlassIcon className="h-10 w-10 mx-auto opacity-30" style={{ color: 'var(--accent)' }} />
+                      <h3 className="text-lg font-bold font-theme-heading">No matching entries found</h3>
+                      <p className="text-sm opacity-75">Try adjusting your search query or clear the filter.</p>
+                      <button
+                        onClick={() => setSearchQuery('')}
+                        className="px-5 py-2.5 rounded-xl text-sm font-semibold border transition-all mt-2 cursor-pointer"
+                        style={{ borderColor: 'var(--border-color)', backgroundColor: 'var(--bg-primary)' }}
+                      >
+                        Clear Search
+                      </button>
+                    </div>
+                  ) : (
+                    filteredAndSortedEntries.map((entry) => {
+                      const displayDate = entry.journal_date || entry.created_at;
+                      
+                      // Compute average rating
+                      const avgRating = entry.category_sections?.length > 0 
+                        ? (entry.category_sections.reduce((acc, curr) => acc + (curr.rating_score || 0), 0) / entry.category_sections.length).toFixed(1)
+                        : null;
 
-                  return (
-                    <Link
-                      key={entry.id}
-                      href={`/journal/entries/${entry.id}`}
-                      className="p-6 sm:p-7 rounded-3xl border shadow-sm transition-all hover:-translate-y-1 hover:shadow-md flex flex-col justify-between space-y-6 group relative"
-                      style={{
-                        backgroundColor: 'var(--card-bg)',
-                        borderColor: 'var(--border-color)'
-                      }}
-                    >
-                      <div className="space-y-4">
-                        <div className="flex items-center justify-between text-xs opacity-75">
-                          <div className="flex items-center gap-2 font-mono">
-                            <CalendarIcon className="h-4 w-4" style={{ color: 'var(--accent)' }} />
-                            <span>{new Date(displayDate || Date.now()).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
-                          </div>
+                      // Habit completion stats
+                      const habits = entry.habits || [];
+                      const completedHabits = habits.filter((h) => h.is_completed).length;
 
-                          <button
-                            onClick={(e) => openDeleteModal(e, entry)}
-                            className="p-2 rounded-xl text-rose-500 hover:bg-rose-500/10 transition-colors opacity-0 group-hover:opacity-100 cursor-pointer"
-                            title="Delete Entry"
-                          >
-                            <TrashIcon className="h-4 w-4" />
-                          </button>
-                        </div>
+                      return (
+                        <Link
+                          key={entry.id}
+                          href={`/journal/entries/${entry.id}`}
+                          className="p-6 sm:p-7 rounded-3xl border shadow-sm transition-all hover:-translate-y-1 hover:shadow-md flex flex-col justify-between space-y-6 group relative"
+                          style={{
+                            backgroundColor: 'var(--card-bg)',
+                            borderColor: 'var(--border-color)'
+                          }}
+                        >
+                          <div className="space-y-4">
+                            <div className="flex items-center justify-between opacity-75">
+                              <div className="flex items-center gap-2 font-mono">
+                                <CalendarIcon className="h-4 w-4" style={{ color: 'var(--accent)' }} />
+                                <span>{new Date(displayDate || Date.now()).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
+                              </div>
 
-                        <h3 className="text-xl font-bold font-theme-heading group-hover:opacity-95 transition-opacity line-clamp-1 pr-6" style={{ color: 'var(--text-main)' }}>
-                          {entry.title}
-                        </h3>
-
-                        <p className="text-sm opacity-80 line-clamp-3 leading-relaxed font-theme-body" style={{ color: 'var(--text-muted)' }}>
-                          {getExcerpt(entry.highlights)}
-                        </p>
-
-                        {/* Category Tags Pills */}
-                        {entry.category_sections?.length > 0 && (
-                          <div className="flex flex-wrap gap-2 pt-1">
-                            {entry.category_sections.map((sec, idx) => (
-                              <span 
-                                key={idx}
-                                className="px-3 py-1 rounded-lg text-xs font-semibold border flex items-center gap-1.5 shadow-2xs"
-                                style={{ backgroundColor: 'var(--bg-primary)', borderColor: 'var(--border-color)', color: 'var(--accent)' }}
+                              <button
+                                onClick={(e) => openDeleteModal(e, entry)}
+                                className="p-2 rounded-xl text-rose-500 hover:bg-rose-500/10 transition-colors opacity-0 group-hover:opacity-100 cursor-pointer"
+                                title="Delete Entry"
                               >
-                                <TagIcon className="h-3.5 w-3.5" />
-                                <span>{sec.category_name || 'Category'}</span>
-                              </span>
-                            ))}
+                                <TrashIcon className="h-4 w-4" />
+                              </button>
+                            </div>
+
+                            <h3 className="text-xl font-bold font-theme-heading group-hover:opacity-95 transition-opacity line-clamp-1 pr-6" style={{ color: 'var(--text-main)' }}>
+                              {entry.title}
+                            </h3>
+
+                            {/* Tags Display */}
+                            {entry.tags && entry.tags.length > 0 && (
+                              <div className="flex flex-wrap gap-1.5 pt-0.5">
+                                {entry.tags.map((tag, idx) => (
+                                  <span
+                                    key={idx}
+                                    className="px-2.5 py-0.5 rounded-md text-[10px] font-bold font-mono border"
+                                    style={{ backgroundColor: 'var(--bg-primary)', borderColor: 'var(--border-color)', color: 'var(--accent)' }}
+                                  >
+                                    #{typeof tag === 'string' ? tag : tag.name}
+                                  </span>
+                                ))}
+                              </div>
+                            )}
+
+                            <p className="text-sm opacity-80 line-clamp-3 leading-relaxed font-theme-body" style={{ color: 'var(--text-muted)' }}>
+                              {getExcerpt(entry.highlights)}
+                            </p>
+
+                            {/* Category Tags Pills */}
+                            {entry.category_sections?.length > 0 && (
+                              <div className="flex flex-wrap gap-2 pt-1">
+                                {entry.category_sections.map((sec, idx) => (
+                                  <span 
+                                    key={idx}
+                                    className="px-3 py-1 rounded-lg font-semibold border flex items-center gap-1.5 shadow-2xs"
+                                    style={{ backgroundColor: 'var(--bg-primary)', borderColor: 'var(--border-color)', color: 'var(--accent)' }}
+                                  >
+                                    <TagIcon className="h-3.5 w-3.5" />
+                                    <span>{sec.category_name || 'Category'}</span>
+                                  </span>
+                                ))}
+                              </div>
+                            )}
                           </div>
-                        )}
-                      </div>
 
-                      <div className="pt-4 border-t flex items-center justify-between text-sm" style={{ borderColor: 'var(--border-color)' }}>
-                        <div className="flex items-center gap-4">
-                          {avgRating && (
-                            <div className="flex items-center gap-1.5 font-semibold">
-                              <StarIcon className="h-4 w-4 text-amber-400 fill-amber-400" />
-                              <span>{avgRating}</span>
+                          <div className="pt-4 border-t flex items-center justify-between text-sm" style={{ borderColor: 'var(--border-color)' }}>
+                            <div className="flex items-center gap-4">
+                              {avgRating && (
+                                <div className="flex items-center gap-1.5 font-semibold">
+                                  <StarIcon className="h-4 w-4 text-amber-400 fill-amber-400" />
+                                  <span>{avgRating}</span>
+                                </div>
+                              )}
+
+                              {habits.length > 0 && (
+                                <div className="flex items-center gap-1.5 opacity-80">
+                                  <CheckCircleIcon className="h-4 w-4" style={{ color: 'var(--accent)' }} />
+                                  <span>{completedHabits}/{habits.length} habits</span>
+                                </div>
+                              )}
                             </div>
-                          )}
 
-                          {habits.length > 0 && (
-                            <div className="flex items-center gap-1.5 opacity-80 font-mono text-xs">
-                              <CheckCircleIcon className="h-4 w-4" style={{ color: 'var(--accent)' }} />
-                              <span>{completedHabits}/{habits.length} habits</span>
-                            </div>
-                          )}
-                        </div>
+                            <span className="flex items-center gap-1 font-semibold group-hover:translate-x-1 transition-transform" style={{ color: 'var(--accent)' }}>
+                              <span>Read</span>
+                              <ArrowRightIcon className="h-4 w-4" />
+                            </span>
+                          </div>
+                        </Link>
+                      );
+                    })
+                  )}
+                </div>
+              </section>
 
-                        <span className="flex items-center gap-1 font-semibold group-hover:translate-x-1 transition-transform" style={{ color: 'var(--accent)' }}>
-                          <span>Read</span>
-                          <ArrowRightIcon className="h-4 w-4" />
-                        </span>
-                      </div>
-                    </Link>
-                  );
-                })
-              )}
             </div>
-          </section>
+          )}
 
         </main>
 
