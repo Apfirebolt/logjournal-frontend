@@ -14,10 +14,10 @@ const Footer = () => {
       }}
     >
       <div className="container mx-auto px-6 pt-12 pb-8 max-w-7xl">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-10 mb-12">
+        <div className="grid grid-cols-1 md:grid-cols-[2fr_1fr_1fr_1fr] gap-10 mb-12">
           
-          {/* Brand & Description */}
-          <div className="space-y-4">
+          {/* Column 1: Brand & Description (Takes ~50% space) */}
+          <div className="space-y-4 pr-4">
             <Link href="/" className="inline-flex items-center gap-2 group">
               <div 
                 className="p-1.5 rounded-lg transition-transform group-hover:scale-105"
@@ -25,18 +25,18 @@ const Footer = () => {
               >
                 <BookOpenIcon className="h-4 w-4" />
               </div>
-              <span className="text-xl font-bold font-theme-heading tracking-tight" style={{ color: 'var(--text-main)' }}>
+              <span className="text-2xl font-bold font-theme-heading tracking-tight" style={{ color: 'var(--text-main)' }}>
                 Softgenie <span style={{ color: 'var(--accent)' }}> Journal</span>
               </span>
             </Link>
-            <p className="text-sm leading-relaxed font-theme-body opacity-80 max-w-sm" style={{ color: 'var(--text-muted)' }}>
-              A flexible daily journaling and self-reflection platform with custom categories, block-based prompts, and category ratings.
+            <p className="text-sm leading-relaxed font-theme-body opacity-80 max-w-md" style={{ color: 'var(--text-muted)' }}>
+              A flexible daily journaling and self-reflection platform featuring block-based rich text prompts, custom categories, habit tracking, and tag management.
             </p>
           </div>
 
-          {/* Navigation Links */}
+          {/* Column 2: Navigation Links */}
           <div className="space-y-3 font-theme-body">
-            <h3 className="text-xs font-bold uppercase tracking-widest opacity-60" style={{ color: 'var(--text-main)' }}>
+            <h3 className="font-bold uppercase tracking-widest opacity-60" style={{ color: 'var(--text-main)' }}>
               Navigation
             </h3>
             <ul className="space-y-2 text-sm">
@@ -63,9 +63,23 @@ const Footer = () => {
             </ul>
           </div>
 
-          {/* System & Analytics Links */}
+          {/* Column 3: Feature List */}
           <div className="space-y-3 font-theme-body">
-            <h3 className="text-xs font-bold uppercase tracking-widest opacity-60" style={{ color: 'var(--text-main)' }}>
+            <h3 className="font-bold uppercase tracking-widest opacity-60" style={{ color: 'var(--text-main)' }}>
+              Features
+            </h3>
+            <ul className="space-y-2 text-sm opacity-80">
+              <li>Block-Based Editor</li>
+              <li>Habit & Task Tracker</li>
+              <li>Custom Categories</li>
+              <li>Tag Auto-Creation</li>
+              <li>Writing Calendar</li>
+            </ul>
+          </div>
+
+          {/* Column 4: Insights & Source */}
+          <div className="space-y-3 font-theme-body">
+            <h3 className="font-bold uppercase tracking-widest opacity-60" style={{ color: 'var(--text-main)' }}>
               Insights & Source
             </h3>
             <ul className="space-y-2 text-sm">
@@ -91,7 +105,7 @@ const Footer = () => {
 
         {/* Divider & Copyright */}
         <div 
-          className="border-t pt-6 mt-6 flex flex-col md:flex-row justify-between items-center text-xs font-theme-body gap-4 opacity-75"
+          className="border-t pt-6 mt-6 flex flex-col md:flex-row justify-between items-center font-theme-body gap-4 opacity-75"
           style={{ borderColor: 'var(--border-color)', color: 'var(--text-muted)' }}
         >
           <p>&copy; {new Date().getFullYear()} Softgenie Journal Platform. All rights reserved.</p>
