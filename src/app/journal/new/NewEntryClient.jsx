@@ -6,10 +6,12 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import AuthGuard from '@/components/AuthGuard';
 import HabitChecklist from '@/components/HabitCheckList';
+import TagSelector from '@/components/TagSelector';
 import { useJournalStore } from '@/store/useJournalStore';
 import { PencilSquareIcon, CheckIcon, StarIcon, CalendarIcon, TagIcon, AdjustmentsHorizontalIcon } from '@heroicons/react/24/outline';
 import { toast } from 'react-toastify';
 import AOS from 'aos';
+import 'aos/dist/aos.css';
 
 export default function NewEntryClient() {
   const router = useRouter();
@@ -17,6 +19,7 @@ export default function NewEntryClient() {
   const { categories, fetchCategories, createEntry, loading } = useJournalStore();
 
   const [title, setTitle] = useState('');
+  const [tags, setTags] = useState([]);
   
   const [journalDate, setJournalDate] = useState(() => {
     const paramDate = searchParams.get('date');
@@ -32,12 +35,10 @@ export default function NewEntryClient() {
     gratitude: true,
     thoughts: true,
     habits: true,
-    categories: true, // Master toggle for categories or individual category mapping below
+    categories: true,
   });
 
-  // Individual category visibility toggles: { [categoryId]: boolean }
   const [activeCategories, setActiveCategories] = useState({});
-
   const [categoryRatings, setCategoryRatings] = useState({});
   const [habits, setHabits] = useState([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -63,14 +64,13 @@ export default function NewEntryClient() {
     fetchCategories();
   }, [fetchCategories]);
 
-  // Set default active state for newly loaded categories
   useEffect(() => {
     if (categories.length > 0) {
       setActiveCategories((prev) => {
         const next = { ...prev };
         categories.forEach((cat) => {
           if (next[cat.id] === undefined) {
-            next[cat.id] = true; // Enabled by default
+            next[cat.id] = true;
           }
         });
         return next;
@@ -78,7 +78,7 @@ export default function NewEntryClient() {
     }
   }, [categories]);
 
-  // Initialize Editors with Medium-like Tools
+  // Initialize Editors
   useEffect(() => {
     let isMounted = true;
 
@@ -100,10 +100,7 @@ export default function NewEntryClient() {
       const editorTools = {
         header: {
           class: HeaderBlock,
-          config: {
-            levels: [2, 3, 4],
-            defaultLevel: 2,
-          }
+          config: { levels: [2, 3, 4], defaultLevel: 2 }
         },
         paragraph: { class: ParagraphBlock, inlineToolbar: true },
         list: { class: ListBlock, inlineToolbar: true },
@@ -114,7 +111,6 @@ export default function NewEntryClient() {
         table: TableBlock,
       };
 
-      // 1. Highlights Editor (if visible and ref exists)
       if (visibleSections.highlights && highlightsEditorRef.current && !editorInstanceRef.current.highlights) {
         editorInstanceRef.current.highlights = new EditorJS({
           holder: highlightsEditorRef.current,
@@ -123,7 +119,6 @@ export default function NewEntryClient() {
         });
       }
 
-      // 2. Gratitude Editor
       if (visibleSections.gratitude && gratitudeEditorRef.current && !editorInstanceRef.current.gratitude) {
         editorInstanceRef.current.gratitude = new EditorJS({
           holder: gratitudeEditorRef.current,
@@ -132,7 +127,6 @@ export default function NewEntryClient() {
         });
       }
 
-      // 3. Better Day Thoughts Editor
       if (visibleSections.thoughts && thoughtsEditorRef.current && !editorInstanceRef.current.thoughts) {
         editorInstanceRef.current.thoughts = new EditorJS({
           holder: thoughtsEditorRef.current,
@@ -141,7 +135,6 @@ export default function NewEntryClient() {
         });
       }
 
-      // 4. Dynamic Category Editors
       if (visibleSections.categories) {
         categories.forEach((cat) => {
           if (activeCategories[cat.id]) {
@@ -162,19 +155,6 @@ export default function NewEntryClient() {
 
     return () => {
       isMounted = false;
-      // Clean up instances when toggling off
-      if (!visibleSections.highlights && editorInstanceRef.current.highlights) {
-        editorInstanceRef.current.highlights.destroy();
-        editorInstanceRef.current.highlights = null;
-      }
-      if (!visibleSections.gratitude && editorInstanceRef.current.gratitude) {
-        editorInstanceRef.current.gratitude.destroy();
-        editorInstanceRef.current.gratitude = null;
-      }
-      if (!visibleSections.thoughts && editorInstanceRef.current.thoughts) {
-        editorInstanceRef.current.thoughts.destroy();
-        editorInstanceRef.current.thoughts = null;
-      }
     };
   }, [visibleSections, activeCategories, categories]);
 
@@ -242,6 +222,7 @@ export default function NewEntryClient() {
         better_day_thoughts: thoughtsData ? JSON.stringify(thoughtsData.blocks) : '',
         category_sections,
         habits: visibleSections.habits ? habits : [],
+        tags: tags, // Include tags in payload
       };
 
       const result = await createEntry(payload);
@@ -311,52 +292,27 @@ export default function NewEntryClient() {
               </div>
               <div className="flex flex-wrap gap-3 pt-1">
                 <label className="inline-flex items-center gap-2 px-3 py-2 rounded-xl border font-medium cursor-pointer transition-colors" style={{ backgroundColor: 'var(--bg-primary)', borderColor: 'var(--border-color)' }}>
-                  <input 
-                    type="checkbox" 
-                    checked={visibleSections.highlights} 
-                    onChange={() => toggleSection('highlights')} 
-                    className="rounded accent-[var(--accent)]"
-                  />
+                  <input type="checkbox" checked={visibleSections.highlights} onChange={() => toggleSection('highlights')} className="rounded accent-[var(--accent)]" />
                   <span>Highlights</span>
                 </label>
 
                 <label className="inline-flex items-center gap-2 px-3 py-2 rounded-xl border font-medium cursor-pointer transition-colors" style={{ backgroundColor: 'var(--bg-primary)', borderColor: 'var(--border-color)' }}>
-                  <input 
-                    type="checkbox" 
-                    checked={visibleSections.gratitude} 
-                    onChange={() => toggleSection('gratitude')} 
-                    className="rounded accent-[var(--accent)]"
-                  />
+                  <input type="checkbox" checked={visibleSections.gratitude} onChange={() => toggleSection('gratitude')} className="rounded accent-[var(--accent)]" />
                   <span>Gratitude</span>
                 </label>
 
                 <label className="inline-flex items-center gap-2 px-3 py-2 rounded-xl border font-medium cursor-pointer transition-colors" style={{ backgroundColor: 'var(--bg-primary)', borderColor: 'var(--border-color)' }}>
-                  <input 
-                    type="checkbox" 
-                    checked={visibleSections.thoughts} 
-                    onChange={() => toggleSection('thoughts')} 
-                    className="rounded accent-[var(--accent)]"
-                  />
+                  <input type="checkbox" checked={visibleSections.thoughts} onChange={() => toggleSection('thoughts')} className="rounded accent-[var(--accent)]" />
                   <span>Reflection</span>
                 </label>
 
                 <label className="inline-flex items-center gap-2 px-3 py-2 rounded-xl border font-medium cursor-pointer transition-colors" style={{ backgroundColor: 'var(--bg-primary)', borderColor: 'var(--border-color)' }}>
-                  <input 
-                    type="checkbox" 
-                    checked={visibleSections.habits} 
-                    onChange={() => toggleSection('habits')} 
-                    className="rounded accent-[var(--accent)]"
-                  />
+                  <input type="checkbox" checked={visibleSections.habits} onChange={() => toggleSection('habits')} className="rounded accent-[var(--accent)]" />
                   <span>To Do Checklist</span>
                 </label>
 
                 <label className="inline-flex items-center gap-2 px-3 py-2 rounded-xl border font-medium cursor-pointer transition-colors" style={{ backgroundColor: 'var(--bg-primary)', borderColor: 'var(--border-color)' }}>
-                  <input 
-                    type="checkbox" 
-                    checked={visibleSections.categories} 
-                    onChange={() => toggleSection('categories')} 
-                    className="rounded accent-[var(--accent)]"
-                  />
+                  <input type="checkbox" checked={visibleSections.categories} onChange={() => toggleSection('categories')} className="rounded accent-[var(--accent)]" />
                   <span>Custom Categories</span>
                 </label>
               </div>
@@ -373,11 +329,7 @@ export default function NewEntryClient() {
                 value={journalDate}
                 onChange={(e) => setJournalDate(e.target.value)}
                 className="w-full px-4 py-3.5 rounded-2xl border text-sm focus:outline-none shadow-inner font-theme-heading font-semibold"
-                style={{
-                  backgroundColor: 'var(--card-bg)',
-                  borderColor: 'var(--border-color)',
-                  color: 'var(--text-main)'
-                }}
+                style={{ backgroundColor: 'var(--card-bg)', borderColor: 'var(--border-color)', color: 'var(--text-main)' }}
                 required
               />
             </div>
@@ -393,13 +345,14 @@ export default function NewEntryClient() {
                 onChange={(e) => setTitle(e.target.value)}
                 placeholder="e.g., Reflections on System Architecture & Life"
                 className="w-full px-4 py-3.5 rounded-2xl border text-lg focus:outline-none shadow-inner font-theme-heading"
-                style={{
-                  backgroundColor: 'var(--card-bg)',
-                  borderColor: 'var(--border-color)',
-                  color: 'var(--text-main)'
-                }}
+                style={{ backgroundColor: 'var(--card-bg)', borderColor: 'var(--border-color)', color: 'var(--text-main)' }}
                 required
               />
+            </div>
+
+            {/* Tag Selector Component Integration */}
+            <div data-aos="fade-up" data-aos-delay="175">
+              <TagSelector selectedTags={tags} onChange={setTags} />
             </div>
 
             {/* Highlights Editor */}
@@ -411,11 +364,7 @@ export default function NewEntryClient() {
                 <div 
                   ref={highlightsEditorRef}
                   className="p-6 rounded-2xl border shadow-inner min-h-[160px]"
-                  style={{
-                    backgroundColor: 'var(--card-bg)',
-                    borderColor: 'var(--border-color)',
-                    fontSize: 'var(--text-lg)',
-                  }}
+                  style={{ backgroundColor: 'var(--card-bg)', borderColor: 'var(--border-color)', fontSize: 'var(--text-lg)' }}
                 />
               </div>
             )}
@@ -429,11 +378,7 @@ export default function NewEntryClient() {
                 <div 
                   ref={gratitudeEditorRef}
                   className="p-6 rounded-2xl border shadow-inner min-h-[140px]"
-                  style={{
-                    backgroundColor: 'var(--card-bg)',
-                    borderColor: 'var(--border-color)',
-                    fontSize: 'var(--text-lg)',
-                  }}
+                  style={{ backgroundColor: 'var(--card-bg)', borderColor: 'var(--border-color)', fontSize: 'var(--text-lg)' }}
                 />
               </div>
             )}
@@ -447,11 +392,7 @@ export default function NewEntryClient() {
                 <div 
                   ref={thoughtsEditorRef}
                   className="p-6 rounded-2xl border shadow-inner min-h-[140px]"
-                  style={{
-                    backgroundColor: 'var(--card-bg)',
-                    borderColor: 'var(--border-color)',
-                    fontSize: 'var(--text-lg)',
-                  }}
+                  style={{ backgroundColor: 'var(--card-bg)', borderColor: 'var(--border-color)', fontSize: 'var(--text-lg)' }}
                 />
               </div>
             )}
@@ -474,7 +415,6 @@ export default function NewEntryClient() {
                     </p>
                   </div>
 
-                  {/* Individual Category Quick Checkboxes */}
                   <div className="flex flex-wrap gap-2">
                     {categories.map((cat) => (
                       <button

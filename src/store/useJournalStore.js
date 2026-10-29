@@ -12,6 +12,7 @@ export const useJournalStore = create((set, get) => ({
   entries: [],
   currentEntry: null,
   categories: [],
+  tags: [], // Added tags state
   loading: false,
   error: null,
 
@@ -46,18 +47,21 @@ export const useJournalStore = create((set, get) => ({
   },
 
   // 3. Create a new journal entry
-  // payload expects: { title, highlights, gratitude, better_day_thoughts, category_sections: [...] }
+  // payload expects: { title, highlights, gratitude, better_day_thoughts, category_sections: [...], tags: [...] }
   createEntry: async (entryData) => {
     set({ loading: true, error: null });
     try {
       const res = await httpClient.post('/journal/entries', entryData, getAuthHeaders());
       const newEntry = res.data;
       
-      // Prepend to current entries list
+      // Prepend to current entries list and refresh tags list
       set((state) => ({
         entries: [newEntry, ...state.entries],
         loading: false,
       }));
+      
+      // Fetch latest tags in case new ones were auto-created
+      get().fetchTags();
 
       return { success: true, data: newEntry };
     } catch (err) {
@@ -81,6 +85,9 @@ export const useJournalStore = create((set, get) => ({
         currentEntry: updatedEntry,
         loading: false,
       }));
+
+      // Refresh tags list
+      get().fetchTags();
 
       return { success: true, data: updatedEntry };
     } catch (err) {
@@ -146,6 +153,19 @@ export const useJournalStore = create((set, get) => ({
       const detail = err.response?.data?.detail;
       const errorMsg = typeof detail === 'string' ? detail : (detail?.[0]?.msg || err.message || "Failed to create category.");
       set({ error: errorMsg, loading: false });
+      return { success: false, error: errorMsg };
+    }
+  },
+
+  // 8. Fetch all user tags
+  fetchTags: async () => {
+    try {
+      const res = await httpClient.get('/journal/tags', getAuthHeaders());
+      set({ tags: res.data });
+      return { success: true, data: res.data };
+    } catch (err) {
+      const detail = err.response?.data?.detail;
+      const errorMsg = typeof detail === 'string' ? detail : (detail?.[0]?.msg || err.message || "Failed to fetch tags.");
       return { success: false, error: errorMsg };
     }
   },
