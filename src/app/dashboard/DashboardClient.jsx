@@ -234,7 +234,7 @@ export default function DashboardPage() {
                   <ChartBarIcon className="h-5 w-5" style={{ color: 'var(--accent)' }} />
                   <h2 className="text-xl font-bold font-theme-heading">Available Categories</h2>
                 </div>
-                <span className=" font-mono opacity-70">{categories.length} total</span>
+                <span className="opacity-70">{categories.length} total</span>
               </div>
 
               <div className="flex flex-wrap gap-2.5 pt-1">
@@ -250,7 +250,7 @@ export default function DashboardPage() {
                       <span className="w-2 h-2 rounded-full" style={{ backgroundColor: 'var(--accent)' }} />
                       <span>{cat.name}</span>
                       {cat.is_default === 1 && (
-                        <span className="text-[10px] font-mono opacity-50 px-1.5 py-0.5 rounded border" style={{ borderColor: 'var(--border-color)' }}>Default</span>
+                        <span className="text-[10px] opacity-50 px-1.5 py-0.5 rounded border" style={{ borderColor: 'var(--border-color)' }}>Default</span>
                       )}
                     </div>
                   ))
@@ -278,7 +278,7 @@ export default function DashboardPage() {
                   tags.map((t) => (
                     <span 
                       key={t.id}
-                      className="px-3.5 py-1.5 rounded-xl  font-bold font-mono border shadow-2xs"
+                      className="px-3.5 py-1.5 rounded-xl text-sm font-bold border shadow-2xs"
                       style={{ backgroundColor: 'var(--bg-primary)', borderColor: 'var(--border-color)', color: 'var(--accent)' }}
                     >
                       #{t.name}
@@ -334,7 +334,7 @@ export default function DashboardPage() {
                       style={{ backgroundColor: 'var(--card-bg)', borderColor: 'var(--border-color)' }}
                     >
                       <div className="space-y-3">
-                        <div className="flex items-center gap-2 font-mono  opacity-70">
+                        <div className="flex items-center gap-2 opacity-70">
                           <CalendarIcon className="h-3.5 w-3.5" style={{ color: 'var(--accent)' }} />
                           <span>{new Date(displayDate || Date.now()).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
                         </div>
@@ -349,7 +349,7 @@ export default function DashboardPage() {
                             {entry.tags.slice(0, 2).map((tag, idx) => (
                               <span 
                                 key={idx}
-                                className="px-2 py-0.5 rounded text-[10px] font-mono border"
+                                className="px-2 py-0.5 rounded text-[10px] border"
                                 style={{ backgroundColor: 'var(--bg-primary)', borderColor: 'var(--border-color)', color: 'var(--accent)' }}
                               >
                                 #{typeof tag === 'string' ? tag : tag.name}
